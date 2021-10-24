@@ -1,9 +1,17 @@
 package cpen221.mp2;
 
+import com.sun.jdi.connect.spi.TransportService;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -12,6 +20,8 @@ import java.util.Set;
 public class DWInteractionGraph {
     private List<String> StringDataLines = new ArrayList<String>(); // Raw String Data read from txt
     private List<List<Integer>> IntegerDataLines = new ArrayList<>(); // Convert String Data to Integer List
+    private Set<Integer> peoples = new HashSet(); // Set of senders (numSenders == numReceivers)
+    private Map<Integer, Map<Integer, Integer>> adjacencyList;
 
     /* ------- Task 1 ------- */
     /* Building the Constructors */
@@ -25,7 +35,37 @@ public class DWInteractionGraph {
      */
     public DWInteractionGraph(String fileName) {
         readStringData(fileName);
+        StringToInteger(StringDataLines);
+        setPeoples(IntegerDataLines);
+
+        adjacencyList = new HashMap<Integer,Map<Integer, Integer>>();
+        for(int i = 0; i <= Collections.max(peoples); i++){
+            adjacencyList.put(i, new HashMap<Integer, Integer>());
+        }
+        for (List l : IntegerDataLines) {
+            setEdge(l.get(0), l.get(1), );
+        }
+
     }
+
+    // set edge to vertice
+    private void setEdge(int sender, int receiver, int weight) {
+        Map<Integer, Integer> edges = adjacencyList.get(sender);
+        edges.put(receiver, weight);
+    }
+    // make set of people are in this data (No duplicate)
+    private void setPeoples (List<List<Integer>> list) {
+        List<Integer> tempList;
+        for (int i = 0; i < list.size(); i++) {
+            tempList = list.get(i);
+            peoples.add(tempList.get(0));
+        }
+    }
+    // Get number of people (No duplicate)
+    private int getNumPeople (Set<Integer> peoples) {
+        return peoples.size();
+    }
+
 
     // Write spec Junsu. Do I have to write spec for private method?
     private void readStringData (String fileName) {

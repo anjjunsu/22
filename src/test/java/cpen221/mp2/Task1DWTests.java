@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class Task1DWTests {
 
     private static DWInteractionGraph dwig;
