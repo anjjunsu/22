@@ -1,4 +1,4 @@
-omk# MP2: Analyzing Email Interactions
+# MP2: Analyzing Email Interactions
 
 ## Motivation:
  
