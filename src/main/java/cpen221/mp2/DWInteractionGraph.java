@@ -1,9 +1,17 @@
 package cpen221.mp2;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 public class DWInteractionGraph {
+    private List<String> StringDataLines = new ArrayList<String>(); // Raw String Data read from txt
+    private List<List<Integer>> IntegerDataLines = new ArrayList<>(); // Convert String Data to Integer List
 
     /* ------- Task 1 ------- */
     /* Building the Constructors */
@@ -16,9 +24,32 @@ public class DWInteractionGraph {
      *                 directory containing email interactions
      */
     public DWInteractionGraph(String fileName) {
-        // TODO: Implement this constructor
+        readStringData(fileName);
     }
 
+    // Write spec Junsu. Do I have to write spec for private method?
+    private void readStringData (String fileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                StringDataLines.add(line);
+            }
+        } catch (IOException ioe) {
+            System.out.println("Problem reading file!");
+        }
+        StringToInteger(StringDataLines);
+    }
+    // Write Spec Junsu
+    private void StringToInteger(List<String> stringList) {
+
+        for (int i = 0; i < stringList.size(); i++) {
+            Scanner scanner = new Scanner(stringList.get(i));
+            List<Integer> list = new ArrayList<Integer>();
+            while (scanner.hasNextInt())
+                list.add(scanner.nextInt());
+            IntegerDataLines.add(list);
+        }
+    }
     /**
      * Creates a new DWInteractionGraph from a DWInteractionGraph object
      * and considering a time window filter.
