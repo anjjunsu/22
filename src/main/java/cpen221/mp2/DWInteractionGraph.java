@@ -20,9 +20,10 @@ import java.util.Set;
 public class DWInteractionGraph {
     private List<String> StringDataLines = new ArrayList<String>(); // Raw String Data read from txt
     private List<List<Integer>> IntegerDataLines = new ArrayList<>(); // Convert String Data to Integer List
-    private Set<Integer> peoples = new HashSet(); // Set of senders (numSenders == numReceivers)
-    private Map<Integer, Map<Integer, Integer>> adjacencyList;
-
+    private Set<Integer> peoplesSet = new HashSet(); // Set of senders (numSenders == numReceivers); used set to remove duplicates
+    private List<Integer> peoplesList = new ArrayList<>(); // List of senders (numSenders == numReceivers); used list to easily get elements
+    private Map<Integer, List<Integer>> manufacturedData = new HashMap<>();
+    private HashMap<Integer, ArrayList<Integer>> adjacencyMap = new HashMap<Integer, ArrayList<Integer>>();
     /* ------- Task 1 ------- */
     /* Building the Constructors */
 
@@ -35,35 +36,32 @@ public class DWInteractionGraph {
      */
     public DWInteractionGraph(String fileName) {
         readStringData(fileName);
-        StringToInteger(StringDataLines);
-        setPeoples(IntegerDataLines);
+        setPeoples();
+        setManufacturedData();
 
-        adjacencyList = new HashMap<Integer,Map<Integer, Integer>>();
-        for(int i = 0; i <= Collections.max(peoples); i++){
-            adjacencyList.put(i, new HashMap<Integer, Integer>());
-        }
         for (List l : IntegerDataLines) {
-            setEdge(l.get(0), l.get(1), );
+            System.out.println(l);
         }
-
     }
 
-    // set edge to vertice
-    private void setEdge(int sender, int receiver, int weight) {
-        Map<Integer, Integer> edges = adjacencyList.get(sender);
-        edges.put(receiver, weight);
+
+    // Manufacture a raw data
+    private void setManufacturedData () {
+        int weight;
+
     }
     // make set of people are in this data (No duplicate)
-    private void setPeoples (List<List<Integer>> list) {
+    private void setPeoples () {
         List<Integer> tempList;
-        for (int i = 0; i < list.size(); i++) {
-            tempList = list.get(i);
-            peoples.add(tempList.get(0));
+        for (int i = 0; i < IntegerDataLines.size(); i++) {
+            tempList = IntegerDataLines.get(i);
+            peoplesSet.add(tempList.get(0));
         }
+        peoplesList.addAll(peoplesSet);
     }
     // Get number of people (No duplicate)
     private int getNumPeople (Set<Integer> peoples) {
-        return peoples.size();
+        return peoplesSet.size();
     }
 
 
