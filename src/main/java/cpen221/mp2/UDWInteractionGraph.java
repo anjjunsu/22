@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class UDWInteractionGraph {
+    private static final int DATA_ELEMENT = 3;
 
     /* ------- Task 1 ------- */
     /* Building the Constructors */
@@ -29,8 +30,18 @@ public class UDWInteractionGraph {
         makeUDWGraph(makeDataEachLine(fileName));
     }
 
-    private void makeUDWGraph(List<List<Integer>> dataEachline) {
-        Map<Integer, Integer> weightMap = new HashMap<>();
+    private void makeUDWGraph(List<List<Integer>> dataEachLine) {
+        // key: user A, value: weight between each user
+        Map<Integer, List<Integer>> weightMap = new HashMap<>();
+
+        for(int i = 0; i < dataEachLine.size(); i++) {
+            int weight = 0;
+            for(int j = 0; j < DATA_ELEMENT; j++) {
+                weight = dataEachLine.get(i).get(DATA_ELEMENT);
+
+            }
+
+        }
 
 
 
