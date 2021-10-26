@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class UDWInteractionGraph {
-    private static final int DATA_ELEMENT = 3;
+    private static final int USER_A = 0;
+    private static final int USER_B = 1;
+    private static final int DATA_WEIGHT = 2;
 
     /* ------- Task 1 ------- */
     /* Building the Constructors */
@@ -26,56 +28,50 @@ public class UDWInteractionGraph {
      */
 
     private Map<Integer, List<List<Integer>>> udwGraph = new HashMap<>();
+    Map<Set<Integer>, Integer> weightMap = new HashMap<>();
 
     public UDWInteractionGraph(String fileName) {
-        makeUDWGraph(makeDataEachLine(fileName));
+        makeWeightGraph(makeDataEachLine(fileName));
+        System.out.println(weightMap);
     }
 
-    private void makeUDWGraph(List<List<Integer>> dataEachLine) {
+    private void makeWeightGraph(List<List<Integer>> dataEachLine) {
         // key: user A, value: weight between each user
         Map<Set<Integer>, Integer> weightMap = new HashMap<>();
+        Set<Set<Integer>> userSetToExclude = new HashSet<>();
 
         for (int i = 0; i < dataEachLine.size() - 1; i++) {
-            for (int j = i + 1; j < dataEachLine.size(); j++) {
-                Set<Integer> userSet = new HashSet<>();
-                userSet.add(i);
-                userSet.add(j);
-                weightMap.put(userSet, addAllWeight(i, j, dataEachLine));
-
+            Set<Integer> userSet = new HashSet<>();
+            userSet.add(dataEachLine.get(i).get(USER_A));
+            userSet.add(dataEachLine.get(i).get(USER_B));
+            if (!userSetToExclude.contains(userSet)) {
+                weightMap.put(userSet, addAllWeight(dataEachLine.get(i).get(USER_A),
+                    dataEachLine.get(i).get(USER_B), dataEachLine));
             }
+            userSetToExclude.add(userSet);
         }
+
+        this.weightMap = weightMap;
     }
 
     private int addAllWeight(int userA, int userB, List<List<Integer>> dataEachLine) {
-
-//        dataEachLine.removeIf(x -> dataEachLine.)
-//        dataEachLine.removeIf(dataEachLine.forEach((a,b,c) -> )
-//        dataEachLine.stream().filter()
-
         List<List<Integer>> dataNeeded = new ArrayList<>();
-
         for (int i = 0; i < dataEachLine.size(); i++) {
             List<Integer> eachLine = dataEachLine.get(i);
-            if (eachLine.get(0) == userA || eachLine.get(0) == userB &&
-                eachLine.get(1) == userA || eachLine.get(1) == userB) {
+            if (eachLine.get(USER_A) == userA || eachLine.get(USER_A) == userB &&
+                eachLine.get(USER_B) == userA || eachLine.get(USER_B) == userB) {
                 dataNeeded.add(eachLine);
             }
         }
-
         int weight = 0;
         for (int i = 0; i < dataNeeded.size(); i++) {
-            weight += dataNeeded.get(i).get(DATA_ELEMENT);
+            weight += dataNeeded.get(i).get(DATA_WEIGHT);
         }
 
+        System.out.println("UserA: " + userA + " UserB: " + userB + " Weight is = " + weight);
         return weight;
     }
 
-//    int sum(int[] arr) {
-//        return Arrays.stream(arr).reduce(0, (x,y) -> x+y) // 0 is the initial value
-//    }
-
-
-    // extract only the ones with userA, and userB
 
     private List<List<Integer>> makeDataEachLine(String fileName) {
         List<List<Integer>> DataEachLine = new LinkedList<>();
@@ -91,7 +87,6 @@ public class UDWInteractionGraph {
             System.out.println("Problem reading file!");
         }
 
-        System.out.println(DataEachLine);
         return DataEachLine;
     }
 
@@ -105,6 +100,7 @@ public class UDWInteractionGraph {
 
         return integerList;
     }
+
 
     /**
      * Creates a new UDWInteractionGraph from a UDWInteractionGraph object
