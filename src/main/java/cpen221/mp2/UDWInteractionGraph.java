@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,11 +30,14 @@ public class UDWInteractionGraph {
     }
 
     private void makeUDWGraph(List<List<Integer>> dataEachline) {
+        Map<Integer, Integer> weightMap = new HashMap<>();
+
+
 
     }
 
     private List<List<Integer>> makeDataEachLine(String fileName) {
-        List<List<Integer>> DataEachLine = new ArrayList<>();
+        List<List<Integer>> DataEachLine = new LinkedList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             for (String fileLine = reader.readLine();
