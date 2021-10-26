@@ -57,18 +57,18 @@ public class UDWInteractionGraph {
     private int addAllWeight(int userA, int userB, List<List<Integer>> dataEachLine) {
         List<List<Integer>> dataNeeded = new ArrayList<>();
         for (int i = 0; i < dataEachLine.size(); i++) {
-            List<Integer> eachLine = dataEachLine.get(i);
-            if (eachLine.get(USER_A) == userA || eachLine.get(USER_A) == userB &&
-                eachLine.get(USER_B) == userA || eachLine.get(USER_B) == userB) {
-                dataNeeded.add(eachLine);
+            int user1 = dataEachLine.get(i).get(USER_A);
+            int user2 = dataEachLine.get(i).get(USER_B);
+
+            if ((user1 == userA || user1 == userB) &&
+                (user2 == userA || user2 == userB)) {
+                dataNeeded.add(dataEachLine.get(i));
             }
         }
         int weight = 0;
         for (int i = 0; i < dataNeeded.size(); i++) {
             weight += dataNeeded.get(i).get(DATA_WEIGHT);
         }
-
-        System.out.println("UserA: " + userA + " UserB: " + userB + " Weight is = " + weight);
         return weight;
     }
 
