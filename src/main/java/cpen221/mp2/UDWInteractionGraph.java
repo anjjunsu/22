@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,20 +33,49 @@ public class UDWInteractionGraph {
 
     private void makeUDWGraph(List<List<Integer>> dataEachLine) {
         // key: user A, value: weight between each user
-        Map<Integer, List<Integer>> weightMap = new HashMap<>();
+        Map<Set<Integer>, Integer> weightMap = new HashMap<>();
 
-        for(int i = 0; i < dataEachLine.size(); i++) {
-            int weight = 0;
-            for(int j = 0; j < DATA_ELEMENT; j++) {
-                weight = dataEachLine.get(i).get(DATA_ELEMENT);
+        for (int i = 0; i < dataEachLine.size() - 1; i++) {
+            for (int j = i + 1; j < dataEachLine.size(); j++) {
+                Set<Integer> userSet = new HashSet<>();
+                userSet.add(i);
+                userSet.add(j);
+                weightMap.put(userSet, addAllWeight(i, j, dataEachLine));
 
             }
+        }
+    }
 
+    private int addAllWeight(int userA, int userB, List<List<Integer>> dataEachLine) {
+
+//        dataEachLine.removeIf(x -> dataEachLine.)
+//        dataEachLine.removeIf(dataEachLine.forEach((a,b,c) -> )
+//        dataEachLine.stream().filter()
+
+        List<List<Integer>> dataNeeded = new ArrayList<>();
+
+        for (int i = 0; i < dataEachLine.size(); i++) {
+            List<Integer> eachLine = dataEachLine.get(i);
+            if (eachLine.get(0) == userA || eachLine.get(0) == userB &&
+                eachLine.get(1) == userA || eachLine.get(1) == userB) {
+                dataNeeded.add(eachLine);
+            }
         }
 
+        int weight = 0;
+        for (int i = 0; i < dataNeeded.size(); i++) {
+            weight += dataNeeded.get(i).get(DATA_ELEMENT);
+        }
 
-
+        return weight;
     }
+
+//    int sum(int[] arr) {
+//        return Arrays.stream(arr).reduce(0, (x,y) -> x+y) // 0 is the initial value
+//    }
+
+
+    // extract only the ones with userA, and userB
 
     private List<List<Integer>> makeDataEachLine(String fileName) {
         List<List<Integer>> DataEachLine = new LinkedList<>();
