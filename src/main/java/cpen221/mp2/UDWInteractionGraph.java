@@ -1,6 +1,12 @@
 package cpen221.mp2;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class UDWInteractionGraph {
@@ -13,10 +19,46 @@ public class UDWInteractionGraph {
      * The email interaction file will be in the resources directory.
      *
      * @param fileName the name of the file in the resources
-     *                 directory containing email interactions
+     * directory containing email interactions
      */
+
+    private Map<Integer, List<List<Integer>>> udwGraph = new HashMap<>();
+
     public UDWInteractionGraph(String fileName) {
-        // TODO: Implement this constructor
+        makeUDWGraph(makeDataEachLine(fileName));
+    }
+
+    private void makeUDWGraph(List<List<Integer>> dataEachline) {
+
+    }
+
+    private List<List<Integer>> makeDataEachLine(String fileName) {
+        List<List<Integer>> DataEachLine = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            for (String fileLine = reader.readLine();
+                 fileLine != null;
+                 fileLine = reader.readLine()) {
+                DataEachLine.add(stringToInteger(fileLine));
+            }
+            reader.close();
+        } catch (IOException ioe) {
+            System.out.println("Problem reading file!");
+        }
+
+        System.out.println(DataEachLine);
+        return DataEachLine;
+    }
+
+    private List<Integer> stringToInteger(String fileLine) {
+        List<Integer> integerList = new ArrayList<>();
+        String[] fileLineParts = fileLine.split("\\s+");
+
+        for (String fileLinePart : fileLineParts) {
+            integerList.add(Integer.parseInt(fileLinePart));
+        }
+
+        return integerList;
     }
 
     /**
@@ -67,7 +109,7 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * @param sender the User ID of the sender in the email transaction.
+     * @param sender   the User ID of the sender in the email transaction.
      * @param receiver the User ID of the receiver in the email transaction.
      * @return the number of emails sent from the specified sender to the specified
      * receiver in this DWInteractionGraph.
@@ -83,7 +125,7 @@ public class UDWInteractionGraph {
      * @param timeWindow is an int array of size 2 [t0, t1]
      *                   where t0<=t1
      * @return an int array of length 2, with the following structure:
-     *  [NumberOfUsers, NumberOfEmailTransactions]
+     * [NumberOfUsers, NumberOfEmailTransactions]
      */
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
         // TODO: Implement this method
@@ -94,7 +136,7 @@ public class UDWInteractionGraph {
      * @param userID the User ID of the user for which
      *               the report will be created
      * @return an int array of length 2 with the following structure:
-     *  [NumberOfEmails, UniqueUsersInteractedWith]
+     * [NumberOfEmails, UniqueUsersInteractedWith]
      * If the specified User ID does not exist in this instance of a graph,
      * returns [0, 0].
      */
@@ -116,7 +158,7 @@ public class UDWInteractionGraph {
 
     /**
      * @return the number of completely disjoint graph
-     *    components in the UDWInteractionGraph object.
+     * components in the UDWInteractionGraph object.
      */
     public int NumberOfComponents() {
         // TODO: Implement this method
