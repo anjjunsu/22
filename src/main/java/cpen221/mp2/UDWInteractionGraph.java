@@ -37,11 +37,10 @@ public class UDWInteractionGraph {
 
     public UDWInteractionGraph(String fileName) {
         dataEachLine = makeUdwGraph(fileName);
-        getUDWI(dataEachLine);
-        System.out.println(dataEachLine);
+        getUDWIG(dataEachLine);
     }
 
-    private void getUDWI(List<List<Integer>> data) {
+    private void getUDWIG(List<List<Integer>> data) {
         dataEachLine = data;
         weightMap = getWeightMap(data);
         // get edge
@@ -50,6 +49,10 @@ public class UDWInteractionGraph {
         edge.forEach(vertexSet::addAll);
         vertex = vertexSet.stream().toList();
         getRelations();
+
+        System.out.println("Data  : " +dataEachLine);
+        System.out.println("Weight: " + weightMap);
+        System.out.println("Edge  : " + edge + "\n\n");
     }
 
     private List<List<Integer>> getData() {
@@ -90,7 +93,7 @@ public class UDWInteractionGraph {
         Map<Set<Integer>, Integer> weightMap = new HashMap<>();
         Set<Set<Integer>> userSetToExclude = new HashSet<>();
 
-        for (int i = 0; i < data.size() - 1; i++) {
+        for (int i = 0; i < data.size(); i++) {
             Set<Integer> userSet = new HashSet<>();
             userSet.add(data.get(i).get(USER_A));
             userSet.add(data.get(i).get(USER_B));
@@ -173,7 +176,7 @@ public class UDWInteractionGraph {
             }
         }
 
-        getUDWI(UDWTimeConstrained);
+        getUDWIG(UDWTimeConstrained);
         System.out.println(dataEachLine);
     }
 
@@ -189,7 +192,6 @@ public class UDWInteractionGraph {
      *                   nor the receiver exist in userFilter.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, List<Integer> userFilter) {
-        // TODO: Implement this constructor
     }
 
     /**
@@ -206,8 +208,9 @@ public class UDWInteractionGraph {
      * in this DWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
-        // TODO: Implement this getter method
-        return null;
+        System.out.println("Vertex : " + vertex);
+        Set<Integer> IDSet = new HashSet<>(vertex);
+        return IDSet;
     }
 
     /**
