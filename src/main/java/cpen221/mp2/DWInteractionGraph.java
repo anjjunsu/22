@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class DWInteractionGraph {
     private List<List<Integer>> IntegerDataLines = new ArrayList<>(); // Convert String Data to Integer List
     private Set<Integer> peoplesSet = new HashSet(); // Set of senders (numSenders == numReceivers); used set to remove duplicates
     private List<Integer> peoplesList = new ArrayList<>(); // List of senders (numSenders == numReceivers); used list to easily get elements
-    private Map<Integer, List<Integer>> manufacturedData = new HashMap<>();
+    private List<List<Integer>> manufacturedData = new ArrayList<>();
     private HashMap<Integer, ArrayList<Integer>> adjacencyMap = new HashMap<Integer, ArrayList<Integer>>();
     /* ------- Task 1 ------- */
     /* Building the Constructors */
@@ -39,15 +40,43 @@ public class DWInteractionGraph {
         setPeoples();
         setManufacturedData();
 
-        for (List l : IntegerDataLines) {
-            System.out.println(l);
-        }
+        System.out.println("--List of Integer List");
+        IntegerDataLines.forEach(x -> System.out.println(x));
+        System.out.println("================================");
+        System.out.println("--All manufactured dats: --");
+        manufacturedData.forEach(x -> System.out.println(x));
+
+
     }
 
 
     // Manufacture a raw data
     private void setManufacturedData () {
-        int weight;
+        Integer highestUserIndex = Collections.max(peoplesList);
+        int count;
+
+
+        for (Integer i : peoplesList) {
+            for (Integer j : peoplesList) {
+                count = 0;
+                for (List list : IntegerDataLines) {
+
+                    if (list.get(0) == (Integer)i && list.get(1) == (Integer) j) {
+                        count++;
+                    }
+
+                }
+                if (count > 0) {
+                    List<Integer> temp = new ArrayList<>();
+                    temp.add(i);
+                    temp.add(j);
+                    temp.add(count);
+                    manufacturedData.add(temp);
+                }
+
+
+            }
+        }
 
     }
     // make set of people are in this data (No duplicate)
