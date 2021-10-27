@@ -50,7 +50,7 @@ public class UDWInteractionGraph {
         vertex = vertexSet.stream().toList();
         getRelations();
 
-        System.out.println("Data  : " +dataEachLine);
+        System.out.println("Data  : " + dataEachLine);
         System.out.println("Weight: " + weightMap);
         System.out.println("Edge  : " + edge + "\n\n");
     }
@@ -177,7 +177,6 @@ public class UDWInteractionGraph {
         }
 
         getUDWIG(UDWTimeConstrained);
-        System.out.println(dataEachLine);
     }
 
 
@@ -192,6 +191,20 @@ public class UDWInteractionGraph {
      *                   nor the receiver exist in userFilter.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, List<Integer> userFilter) {
+
+        List<List<Integer>> data = new ArrayList<>();
+        // userFilter is a new vertex
+
+        for (int i = 0; i < inputUDWIG.dataEachLine.size(); i++) {
+            List<Integer> eachData = inputUDWIG.dataEachLine.get(i);
+            if ((userFilter.contains(eachData.get(USER_A)) &&
+                userFilter.contains(eachData.get(USER_B)))) {
+                data.add(eachData);
+            }
+        }
+
+        getUDWIG(data);
+        vertex = inputUDWIG.vertex;
     }
 
     /**
@@ -220,8 +233,15 @@ public class UDWInteractionGraph {
      * receiver in this DWInteractionGraph.
      */
     public int getEmailCount(int sender, int receiver) {
-        // TODO: Implement this getter method
-        return 0;
+        Set<Integer> users = new HashSet<>();
+        users.add(sender);
+        users.add(receiver);
+
+        if (weightMap.containsKey(users)) {
+            return weightMap.get(users);
+        } else {
+            return 0;
+        }
     }
 
     /* ------- Task 2 ------- */
