@@ -29,68 +29,64 @@ public class UDWInteractionGraph {
      * directory containing email interactions
      */
 
-    private Map<Set<Integer>, Integer> weightMap = new HashMap<>();
-    private List<List<Integer>> dataEachLine = new ArrayList<>();
-    private List<Integer> vertex = new LinkedList<>();
-    private List<List<Integer>> edge = new LinkedList<>();
+    private Map<Set<Integer>, Integer> emailWeightMap = new HashMap<>();
+    private List<List<Integer>> emailData = new ArrayList<>();
+    private List<Integer> users = new LinkedList<>();
+    private List<List<Integer>> userInteractions = new LinkedList<>();
     private Map<Integer, List<Integer>> UDWIG = new HashMap<>();
 
     public UDWInteractionGraph(String fileName) {
-        dataEachLine = makeUdwGraph(fileName);
-        getUDWIG(dataEachLine);
+        emailData = makeUdwGraph(fileName);
+        getUDWIG(emailData);
     }
 
     private void getUDWIG(List<List<Integer>> data) {
-        dataEachLine = data;
-        weightMap = getWeightMap(data);
-        // get edge
-        weightMap.keySet().forEach(x -> edge.add(x.stream().toList()));
-        Set<Integer> vertexSet = new HashSet<>();
-        edge.forEach(vertexSet::addAll);
-        vertex = vertexSet.stream().toList();
+        emailData = data;
+        emailWeightMap = getEmailWeightMap(data);
+        // get userInteractions
+        emailWeightMap.keySet().forEach(x -> userInteractions.add(x.stream().toList()));
+        Set<Integer> userSet = new HashSet<>();
+        userInteractions.forEach(userSet::addAll);
+        users = userSet.stream().toList();
         getRelations();
-
-        System.out.println("Data  : " + dataEachLine);
-        System.out.println("Weight: " + weightMap);
-        System.out.println("Edge  : " + edge + "\n\n");
     }
 
     private List<List<Integer>> getData() {
-        return dataEachLine;
+        return emailData;
     }
 
-    private List<List<Integer>> getEdge() {
-        return edge;
+    private List<List<Integer>> getuserInteractions() {
+        return userInteractions;
     }
 
-    private List<Integer> getVertex() {
-        return vertex;
+    private List<Integer> getUsers() {
+        return users;
     }
 
-    private Map<Set<Integer>, Integer> getWeightMap(List<List<Integer>> data) {
+    private Map<Set<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
         return makeWeightGraph(data);
     }
 
 
     private void getRelations() {
-        for (int i = 0; i < vertex.size(); i++) {
+        for (int i = 0; i < users.size(); i++) {
             Set<Integer> adjacencySet = new HashSet<>();
-            int eachVertex = vertex.get(i);
-            for (int j = 0; j < edge.size(); j++) {
-                if ((edge.get(j).get(USER_A) == eachVertex) ||
-                    (edge.get(j).get(USER_B) == eachVertex)) {
-                    adjacencySet.add(edge.get(j).get(USER_A));
-                    adjacencySet.add(edge.get(j).get(USER_B));
+            int eachUser = users.get(i);
+            for (int j = 0; j < userInteractions.size(); j++) {
+                if ((userInteractions.get(j).get(USER_A) == eachUser) ||
+                    (userInteractions.get(j).get(USER_B) == eachUser)) {
+                    adjacencySet.add(userInteractions.get(j).get(USER_A));
+                    adjacencySet.add(userInteractions.get(j).get(USER_B));
                 }
             }
-            adjacencySet.remove(eachVertex);
-            UDWIG.put(eachVertex, adjacencySet.stream().toList());
+            adjacencySet.remove(eachUser);
+            UDWIG.put(eachUser, adjacencySet.stream().toList());
         }
     }
 
     private Map<Set<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
         // key: user A, value: weight between each user
-        Map<Set<Integer>, Integer> weightMap = new HashMap<>();
+        Map<Set<Integer>, Integer> emailWeightMap = new HashMap<>();
         Set<Set<Integer>> userSetToExclude = new HashSet<>();
 
         for (int i = 0; i < data.size(); i++) {
@@ -98,13 +94,13 @@ public class UDWInteractionGraph {
             userSet.add(data.get(i).get(USER_A));
             userSet.add(data.get(i).get(USER_B));
             if (!userSetToExclude.contains(userSet)) {
-                weightMap.put(userSet, addAllWeight(data.get(i).get(USER_A),
+                emailWeightMap.put(userSet, addAllWeight(data.get(i).get(USER_A),
                     data.get(i).get(USER_B), data));
             }
             userSetToExclude.add(userSet);
         }
 
-        return weightMap;
+        return emailWeightMap;
     }
 
     private int addAllWeight(int userA, int userB, List<List<Integer>> data) {
@@ -193,10 +189,9 @@ public class UDWInteractionGraph {
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, List<Integer> userFilter) {
 
         List<List<Integer>> data = new ArrayList<>();
-        // userFilter is a new vertex
 
-        for (int i = 0; i < inputUDWIG.dataEachLine.size(); i++) {
-            List<Integer> eachData = inputUDWIG.dataEachLine.get(i);
+        for (int i = 0; i < inputUDWIG.emailData.size(); i++) {
+            List<Integer> eachData = inputUDWIG.emailData.get(i);
             if ((userFilter.contains(eachData.get(USER_A)) &&
                 userFilter.contains(eachData.get(USER_B)))) {
                 data.add(eachData);
@@ -204,7 +199,7 @@ public class UDWInteractionGraph {
         }
 
         getUDWIG(data);
-        vertex = inputUDWIG.vertex;
+        users = inputUDWIG.users;
     }
 
     /**
@@ -221,8 +216,7 @@ public class UDWInteractionGraph {
      * in this DWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
-        System.out.println("Vertex : " + vertex);
-        Set<Integer> IDSet = new HashSet<>(vertex);
+        Set<Integer> IDSet = new HashSet<>(users);
         return IDSet;
     }
 
@@ -233,12 +227,12 @@ public class UDWInteractionGraph {
      * receiver in this DWInteractionGraph.
      */
     public int getEmailCount(int sender, int receiver) {
-        Set<Integer> users = new HashSet<>();
-        users.add(sender);
-        users.add(receiver);
+        Set<Integer> user = new HashSet<>();
+        user.add(sender);
+        user.add(receiver);
 
-        if (weightMap.containsKey(users)) {
-            return weightMap.get(users);
+        if (emailWeightMap.containsKey(user)) {
+            return emailWeightMap.get(user);
         } else {
             return 0;
         }
