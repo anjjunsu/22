@@ -29,12 +29,20 @@ public class UDWInteractionGraph {
      */
 
     private Map<Set<Integer>, Integer> weightMap = new HashMap<>();
-    private List<List<Integer>> dataEachLine = new LinkedList<>();
-
+    private List<List<Integer>> dataEachLine = new ArrayList<>();
+    private List<Integer> vertex = new ArrayList<>();
+    private List<List<Integer>> edge = new ArrayList<>();
 
     public UDWInteractionGraph(String fileName) {
         dataEachLine = makeUdwGraph(fileName);
         weightMap = makeWeightGraph(dataEachLine);
+        // get edge
+        weightMap.keySet().forEach(x -> edge.add(x.stream().toList()));
+        Set<Integer> vertexSet = new HashSet<>();
+        edge.forEach(vertexSet::addAll);
+        vertex = vertexSet.stream().toList();
+        System.out.println(vertex);
+
     }
 
     private Map<Set<Integer>, Integer> makeWeightGraph(List<List<Integer>> dataEachLine) {
@@ -74,7 +82,7 @@ public class UDWInteractionGraph {
     }
 
     private List<List<Integer>> makeUdwGraph(String fileName) {
-        List<List<Integer>> dataInteger = new LinkedList<>();
+        List<List<Integer>> dataInteger = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             for (String fileLine = reader.readLine();
