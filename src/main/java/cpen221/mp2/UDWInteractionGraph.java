@@ -27,11 +27,11 @@ public class UDWInteractionGraph {
      * directory containing email interactions
      */
 
-    private Map<Integer, List<List<Integer>>> udwGraph = new HashMap<>();
+    Map<Integer, List<List<Integer>>> udw = new HashMap<>();
     Map<Set<Integer>, Integer> weightMap = new HashMap<>();
 
     public UDWInteractionGraph(String fileName) {
-        makeWeightGraph(makeDataEachLine(fileName));
+        makeWeightGraph(makeUdwGraph(fileName));
         System.out.println(weightMap);
     }
 
@@ -67,13 +67,12 @@ public class UDWInteractionGraph {
         }
         int weight = 0;
         for (int i = 0; i < dataNeeded.size(); i++) {
-            weight += dataNeeded.get(i).get(DATA_WEIGHT);
+            weight ++;
         }
         return weight;
     }
 
-
-    private List<List<Integer>> makeDataEachLine(String fileName) {
+    private List<List<Integer>> makeUdwGraph(String fileName) {
         List<List<Integer>> DataEachLine = new LinkedList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -114,7 +113,7 @@ public class UDWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
-        // TODO: Implement this constructor
+
     }
 
     /**
