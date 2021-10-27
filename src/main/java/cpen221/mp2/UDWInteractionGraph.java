@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class UDWInteractionGraph {
@@ -30,8 +31,9 @@ public class UDWInteractionGraph {
 
     private Map<Set<Integer>, Integer> weightMap = new HashMap<>();
     private List<List<Integer>> dataEachLine = new ArrayList<>();
-    private List<Integer> vertex = new ArrayList<>();
-    private List<List<Integer>> edge = new ArrayList<>();
+    private List<Integer> vertex = new LinkedList<>();
+    private List<List<Integer>> edge = new LinkedList<>();
+    private Map<Integer, List<Integer>> UDWIG = new HashMap<>();
 
     public UDWInteractionGraph(String fileName) {
         dataEachLine = makeUdwGraph(fileName);
@@ -41,8 +43,26 @@ public class UDWInteractionGraph {
         Set<Integer> vertexSet = new HashSet<>();
         edge.forEach(vertexSet::addAll);
         vertex = vertexSet.stream().toList();
+        getUDWIG();
         System.out.println(vertex);
+        System.out.println(edge);
+        System.out.println(UDWIG);
+    }
 
+    private void getUDWIG() {
+        for (int i = 0; i < vertex.size(); i++) {
+            Set<Integer> adjacencySet = new HashSet<>();
+            int eachVertex = vertex.get(i);
+            for (int j = 0; j < edge.size(); j++) {
+                if ((edge.get(j).get(USER_A) == eachVertex) ||
+                    (edge.get(j).get(USER_B) == eachVertex)) {
+                    adjacencySet.add(edge.get(j).get(USER_A));
+                    adjacencySet.add(edge.get(j).get(USER_B));
+                }
+            }
+            adjacencySet.remove(eachVertex);
+            UDWIG.put(eachVertex, adjacencySet.stream().toList());
+        }
     }
 
     private Map<Set<Integer>, Integer> makeWeightGraph(List<List<Integer>> dataEachLine) {
