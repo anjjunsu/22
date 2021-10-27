@@ -14,7 +14,8 @@ import java.util.Set;
 public class UDWInteractionGraph {
     private static final int USER_A = 0;
     private static final int USER_B = 1;
-    private static final int DATA_WEIGHT = 2;
+    private static final int TIME = 2;
+
 
     /* ------- Task 1 ------- */
     /* Building the Constructors */
@@ -27,15 +28,16 @@ public class UDWInteractionGraph {
      * directory containing email interactions
      */
 
-    Map<Integer, List<List<Integer>>> udw = new HashMap<>();
-    Map<Set<Integer>, Integer> weightMap = new HashMap<>();
+    private Map<Set<Integer>, Integer> weightMap = new HashMap<>();
+    private List<List<Integer>> dataEachLine = new LinkedList<>();
+
 
     public UDWInteractionGraph(String fileName) {
-        makeWeightGraph(makeUdwGraph(fileName));
-        System.out.println(weightMap);
+        dataEachLine = makeUdwGraph(fileName);
+        weightMap = makeWeightGraph(dataEachLine);
     }
 
-    private void makeWeightGraph(List<List<Integer>> dataEachLine) {
+    private Map<Set<Integer>, Integer> makeWeightGraph(List<List<Integer>> dataEachLine) {
         // key: user A, value: weight between each user
         Map<Set<Integer>, Integer> weightMap = new HashMap<>();
         Set<Set<Integer>> userSetToExclude = new HashSet<>();
@@ -51,43 +53,43 @@ public class UDWInteractionGraph {
             userSetToExclude.add(userSet);
         }
 
-        this.weightMap = weightMap;
+        return weightMap;
     }
 
     private int addAllWeight(int userA, int userB, List<List<Integer>> dataEachLine) {
         List<List<Integer>> dataNeeded = new ArrayList<>();
-        for (int i = 0; i < dataEachLine.size(); i++) {
-            int user1 = dataEachLine.get(i).get(USER_A);
-            int user2 = dataEachLine.get(i).get(USER_B);
-
+        for (List<Integer> integers : dataEachLine) {
+            int user1 = integers.get(USER_A);
+            int user2 = integers.get(USER_B);
             if ((user1 == userA || user1 == userB) &&
                 (user2 == userA || user2 == userB)) {
-                dataNeeded.add(dataEachLine.get(i));
+                dataNeeded.add(integers);
             }
         }
         int weight = 0;
         for (int i = 0; i < dataNeeded.size(); i++) {
-            weight ++;
+            weight++;
         }
         return weight;
     }
 
     private List<List<Integer>> makeUdwGraph(String fileName) {
-        List<List<Integer>> DataEachLine = new LinkedList<>();
+        List<List<Integer>> dataInteger = new LinkedList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             for (String fileLine = reader.readLine();
                  fileLine != null;
                  fileLine = reader.readLine()) {
-                DataEachLine.add(stringToInteger(fileLine));
+                dataInteger.add(stringToInteger(fileLine));
             }
             reader.close();
         } catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
 
-        return DataEachLine;
+        return dataInteger;
     }
+
 
     private List<Integer> stringToInteger(String fileLine) {
         List<Integer> integerList = new ArrayList<>();
@@ -113,8 +115,22 @@ public class UDWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
-
+//        List<List<Integer>> UDWTimeConstrained = new ArrayList<>();
+//        List<List<Integer>> udw = new ArrayList<>(getData(inputUDWIG));
+//        System.out.println(udw);
+//
+//
+//        for (int i = 0; i < udw.size(); i++) {
+//            int t = udw.get(i).get(TIME);
+//            if (t >= timeFilter[0] && t <= timeFilter[1]) {
+//                UDWTimeConstrained.add(udw.get(i));
+//            }
+//        }
+//
+//        DataEachLine = new LinkedList<>(UDWTimeConstrained);
+//        System.out.println(DataEachLine);
     }
+
 
     /**
      * Creates a new UDWInteractionGraph from a UDWInteractionGraph object
