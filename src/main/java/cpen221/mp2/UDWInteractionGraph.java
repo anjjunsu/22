@@ -37,19 +37,39 @@ public class UDWInteractionGraph {
 
     public UDWInteractionGraph(String fileName) {
         dataEachLine = makeUdwGraph(fileName);
-        weightMap = makeWeightGraph(dataEachLine);
+        getUDWI(dataEachLine);
+        System.out.println(dataEachLine);
+    }
+
+    private void getUDWI(List<List<Integer>> data) {
+        dataEachLine = data;
+        weightMap = getWeightMap(data);
         // get edge
         weightMap.keySet().forEach(x -> edge.add(x.stream().toList()));
         Set<Integer> vertexSet = new HashSet<>();
         edge.forEach(vertexSet::addAll);
         vertex = vertexSet.stream().toList();
-        getUDWIG();
-        System.out.println(vertex);
-        System.out.println(edge);
-        System.out.println(UDWIG);
+        getRelations();
     }
 
-    private void getUDWIG() {
+    private List<List<Integer>> getData() {
+        return dataEachLine;
+    }
+
+    private List<List<Integer>> getEdge() {
+        return edge;
+    }
+
+    private List<Integer> getVertex() {
+        return vertex;
+    }
+
+    private Map<Set<Integer>, Integer> getWeightMap(List<List<Integer>> data) {
+        return makeWeightGraph(data);
+    }
+
+
+    private void getRelations() {
         for (int i = 0; i < vertex.size(); i++) {
             Set<Integer> adjacencySet = new HashSet<>();
             int eachVertex = vertex.get(i);
@@ -65,18 +85,18 @@ public class UDWInteractionGraph {
         }
     }
 
-    private Map<Set<Integer>, Integer> makeWeightGraph(List<List<Integer>> dataEachLine) {
+    private Map<Set<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
         // key: user A, value: weight between each user
         Map<Set<Integer>, Integer> weightMap = new HashMap<>();
         Set<Set<Integer>> userSetToExclude = new HashSet<>();
 
-        for (int i = 0; i < dataEachLine.size() - 1; i++) {
+        for (int i = 0; i < data.size() - 1; i++) {
             Set<Integer> userSet = new HashSet<>();
-            userSet.add(dataEachLine.get(i).get(USER_A));
-            userSet.add(dataEachLine.get(i).get(USER_B));
+            userSet.add(data.get(i).get(USER_A));
+            userSet.add(data.get(i).get(USER_B));
             if (!userSetToExclude.contains(userSet)) {
-                weightMap.put(userSet, addAllWeight(dataEachLine.get(i).get(USER_A),
-                    dataEachLine.get(i).get(USER_B), dataEachLine));
+                weightMap.put(userSet, addAllWeight(data.get(i).get(USER_A),
+                    data.get(i).get(USER_B), data));
             }
             userSetToExclude.add(userSet);
         }
@@ -84,9 +104,9 @@ public class UDWInteractionGraph {
         return weightMap;
     }
 
-    private int addAllWeight(int userA, int userB, List<List<Integer>> dataEachLine) {
+    private int addAllWeight(int userA, int userB, List<List<Integer>> data) {
         List<List<Integer>> dataNeeded = new ArrayList<>();
-        for (List<Integer> integers : dataEachLine) {
+        for (List<Integer> integers : data) {
             int user1 = integers.get(USER_A);
             int user2 = integers.get(USER_B);
             if ((user1 == userA || user1 == userB) &&
@@ -143,20 +163,18 @@ public class UDWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
-//        List<List<Integer>> UDWTimeConstrained = new ArrayList<>();
-//        List<List<Integer>> udw = new ArrayList<>(getData(inputUDWIG));
-//        System.out.println(udw);
-//
-//
-//        for (int i = 0; i < udw.size(); i++) {
-//            int t = udw.get(i).get(TIME);
-//            if (t >= timeFilter[0] && t <= timeFilter[1]) {
-//                UDWTimeConstrained.add(udw.get(i));
-//            }
-//        }
-//
-//        DataEachLine = new LinkedList<>(UDWTimeConstrained);
-//        System.out.println(DataEachLine);
+        List<List<Integer>> dataOfInput = inputUDWIG.getData();
+        List<List<Integer>> UDWTimeConstrained = new ArrayList<>();
+
+        for (int i = 0; i < dataOfInput.size(); i++) {
+            int t = dataOfInput.get(i).get(TIME);
+            if (t >= timeFilter[0] && t <= timeFilter[1]) {
+                UDWTimeConstrained.add(dataOfInput.get(i));
+            }
+        }
+
+        getUDWI(UDWTimeConstrained);
+        System.out.println(dataEachLine);
     }
 
 
