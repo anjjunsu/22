@@ -1,20 +1,15 @@
 package cpen221.mp2;
 
-import com.sun.jdi.connect.spi.TransportService;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -24,8 +19,8 @@ public class DWInteractionGraph {
     private Set<Integer> peoplesSet = new HashSet(); // Set of senders (numSenders == numReceivers); used set to remove duplicates
     private List<Integer> peoplesList = new ArrayList<>(); // List of senders (numSenders == numReceivers); used list to easily get elements
     private List<List<Integer>> manufacturedData = new ArrayList<>();
-    private HashMap<Integer, ArrayList<Integer>> adjacencyMap = new HashMap<Integer, ArrayList<Integer>>();
-    /* ------- Task 1 ------- */
+    private Map<Integer, List<Map<Integer, Integer>>> adjacencyList = new HashMap<Integer,List<Map<Integer, Integer>>>();;
+        /* ------- Task 1 ------- */
     /* Building the Constructors */
 
     /**
@@ -39,15 +34,65 @@ public class DWInteractionGraph {
         readStringData(fileName);
         setPeoples();
         setManufacturedData();
+        Adjacencylist();
 
         System.out.println("--List of Integer List");
         IntegerDataLines.forEach(x -> System.out.println(x));
         System.out.println("================================");
         System.out.println("--All manufactured dats: --");
         manufacturedData.forEach(x -> System.out.println(x));
+        System.out.printf("==============");
+        System.out.println("--Print adjacency list--");
 
-
+        for(Integer e : adjacencyList.keySet()){
+            System.out.print("sender = "+ e + " ");
+            for(Map<Integer,Integer> e1 : adjacencyList.get(e)) {
+                System.out.print(e1);
+        }
+            System.out.println();
+        }
     }
+
+    // construct Adjacency list
+    private void Adjacencylist(){
+
+        for(List<Integer> dataList : manufacturedData){
+            Map<Integer, Integer> tempMap = new HashMap<Integer, Integer>();
+            tempMap.put(dataList.get(1), dataList.get(2));
+            List<Map<Integer, Integer>> tempList = new LinkedList<Map<Integer, Integer>>();
+            tempList.add(tempMap);
+            adjacencyList.put(dataList.get(0), tempList);
+        }
+    }
+
+//    public void setEdge(int a,int b){    //method to add an edge
+//        List<Integer> edges=adjacencyList.get(a);
+//        edges.add(b);
+//    }
+//
+//    public List<Integer> getEdge(int a){
+//        return adjacencyList.get(a);
+//    }
+//
+//    public boolean contain(int a,int b){
+//        return adjacencyList.get(a).contains(b);
+//    }
+//
+//    public int numofEdges(int a){
+//        return adjacencyList.get(a).size();
+//    }
+//
+//    public void removeEdge(int a,int b){
+//        adjacencyList.get(a).remove(b);
+//    }
+//
+//    public void removeVertex(int a){
+//        adjacencyList.get(a).clear();
+//    }
+//
+//    public void addVertex(int a){
+//        adjacencyList.put(a, new LinkedList<Integer>());
+//    }
 
 
     // Manufacture a raw data
