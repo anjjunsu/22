@@ -36,9 +36,6 @@ public class DWInteractionGraph {
     public DWInteractionGraph(String fileName) {
         emailData = makeDwGraph(fileName);
         getDWIG(emailData);
-        System.out.println("EmailWeightMap: " + emailWeightMap);
-        System.out.println("User: " + users);
-        System.out.println("UserInteraciton: " + userInteractions);
     }
 
     /**
@@ -57,7 +54,7 @@ public class DWInteractionGraph {
         getRelations();
     }
 
-    private List<List<Integer>> getData() {
+    protected List<List<Integer>> getData() {
         return emailData;
     }
 
