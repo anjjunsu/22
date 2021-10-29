@@ -89,6 +89,7 @@ public class DWInteractionGraph {
         }
     }
 
+
     private Map<List<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
         // key: user A, value: weight between each user
         Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
