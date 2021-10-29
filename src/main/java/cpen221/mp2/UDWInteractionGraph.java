@@ -18,8 +18,17 @@ public class UDWInteractionGraph {
     private static final int TIME = 2;
 
 
+    // make a graph: superclass of UDWInteractionGraph
+
+
     /* ------- Task 1 ------- */
     /* Building the Constructors */
+
+    private Map<Set<Integer>, Integer> emailWeightMap = new HashMap<>();
+    private List<List<Integer>> emailData = new ArrayList<>();
+    private List<Integer> users = new LinkedList<>();
+    private List<List<Integer>> userInteractions = new LinkedList<>();
+    private Map<Integer, List<Integer>> UDWIG = new HashMap<>();
 
     /**
      * Creates a new UDWInteractionGraph using an email interaction file.
@@ -29,17 +38,15 @@ public class UDWInteractionGraph {
      * directory containing email interactions
      */
 
-    private Map<Set<Integer>, Integer> emailWeightMap = new HashMap<>();
-    private List<List<Integer>> emailData = new ArrayList<>();
-    private List<Integer> users = new LinkedList<>();
-    private List<List<Integer>> userInteractions = new LinkedList<>();
-    private Map<Integer, List<Integer>> UDWIG = new HashMap<>();
-
     public UDWInteractionGraph(String fileName) {
         emailData = makeUdwGraph(fileName);
         getUDWIG(emailData);
     }
 
+    /**
+     * create a new UDWInteractionGraph using Data
+     * @param data is not Null
+     */
     private void getUDWIG(List<List<Integer>> data) {
         emailData = data;
         emailWeightMap = getEmailWeightMap(data);
@@ -208,7 +215,7 @@ public class UDWInteractionGraph {
      * @param inputDWIG a DWInteractionGraph object
      */
     public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
-        // TODO: Implement this constructor
+//        getUDWIG(inputDWIG.getEmailData());
     }
 
     /**
