@@ -219,7 +219,7 @@ public class UDWInteractionGraph {
 
     /**
      * @return a Set of Integers, where every element in the set is a User ID
-     * in this DWInteractionGraph.
+     * in this UDWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
         Set<Integer> IDSet = new HashSet<>(users);
