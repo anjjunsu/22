@@ -81,7 +81,7 @@ public class UDWInteractionGraph {
             int eachUser = users.get(i);
             for (int j = 0; j < userInteractions.size(); j++) {
                 if ((userInteractions.get(j).get(USER_A) == eachUser) ||
-                    (userInteractions.get(j).get(USER_B) == eachUser)) {
+                        (userInteractions.get(j).get(USER_B) == eachUser)) {
                     adjacencySet.add(userInteractions.get(j).get(USER_A));
                     adjacencySet.add(userInteractions.get(j).get(USER_B));
                 }
@@ -102,7 +102,7 @@ public class UDWInteractionGraph {
             userSet.add(data.get(i).get(USER_B));
             if (!userSetToExclude.contains(userSet)) {
                 emailWeightMap.put(userSet, addAllWeight(data.get(i).get(USER_A),
-                    data.get(i).get(USER_B), data));
+                        data.get(i).get(USER_B), data));
             }
             userSetToExclude.add(userSet);
         }
@@ -116,7 +116,7 @@ public class UDWInteractionGraph {
             int user1 = integers.get(USER_A);
             int user2 = integers.get(USER_B);
             if ((user1 == userA || user1 == userB) &&
-                (user2 == userA || user2 == userB)) {
+                    (user2 == userA || user2 == userB)) {
                 dataNeeded.add(integers);
             }
         }
@@ -199,7 +199,7 @@ public class UDWInteractionGraph {
         for (int i = 0; i < inputUDWIG.emailData.size(); i++) {
             List<Integer> eachData = inputUDWIG.emailData.get(i);
             if ((userFilter.contains(eachData.get(USER_A)) &&
-                userFilter.contains(eachData.get(USER_B)))) {
+                    userFilter.contains(eachData.get(USER_B)))) {
                 data.add(eachData);
             }
         }
@@ -213,9 +213,9 @@ public class UDWInteractionGraph {
      *
      * @param inputDWIG a DWInteractionGraph object
      */
-    public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
-        getUDWIG(inputDWIG.getData());
-    }
+//    public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
+//        getUDWIG(inputDWIG.getData());
+//    }
 
     /**
      * @return a Set of Integers, where every element in the set is a User ID

@@ -17,14 +17,14 @@ public class DWInteractionGraph {
     private static final int USER_B = 1;
     private static final int TIME = 2;
 
+
     /* ------- Task 1 ------- */
     /* Building the Constructors */
 
-    private Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
+    private Map<Vertex, List<Edge>> DWG = new HashMap<>();
     private List<List<Integer>> emailData = new ArrayList<>();
-    private List<Integer> users = new LinkedList<>();
-    private List<List<Integer>> userInteractions = new LinkedList<>();
-    private Map<Integer, List<Integer>> DWIG = new HashMap<>();
+    private Map<Integer, List<Integer>> emailWeightMap = new HashMap<>();
+
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
@@ -35,73 +35,68 @@ public class DWInteractionGraph {
      */
     public DWInteractionGraph(String fileName) {
         emailData = makeDwGraph(fileName);
-        getDWIG(emailData);
-    }
+        emailWeightMap = getEmailWeightMap(emailData);
 
-    /**
-     * create a new UDWInteractionGraph using Data
-     *
-     * @param data is not Null
-     */
-    private void getDWIG(List<List<Integer>> data) {
-        emailData = data;
-        emailWeightMap = getEmailWeightMap(data);
-        // get userInteractions
-        emailWeightMap.keySet().forEach(x -> userInteractions.add(x.stream().toList()));
-        Set<Integer> userSet = new HashSet<>();
-        userInteractions.forEach(userSet::addAll);
-        users = userSet.stream().toList();
-        getRelations();
-    }
-
-    protected List<List<Integer>> getData() {
-        return emailData;
-    }
-
-    protected List<List<Integer>> getuserInteractions() {
-        return userInteractions;
-    }
-
-    private List<Integer> getUsers() {
-        return users;
-    }
-
-    private Map<List<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
-        return makeWeightGraph(data);
-    }
-
-    private void getRelations() {
-        for (int i = 0; i < users.size(); i++) {
-            Set<Integer> adjacencySet = new HashSet<>();
-            int eachUser = users.get(i);
-            for (int j = 0; j < userInteractions.size(); j++) {
-                if ((userInteractions.get(j).get(USER_A) == eachUser) ||
-                    (userInteractions.get(j).get(USER_B) == eachUser)) {
-                    adjacencySet.add(userInteractions.get(j).get(USER_A));
-                    adjacencySet.add(userInteractions.get(j).get(USER_B));
-                }
-            }
-            adjacencySet.remove(eachUser);
-            DWIG.put(eachUser, adjacencySet.stream().toList());
+        for(List l : emailData) {
+            System.out.println(l);
         }
     }
 
+    /**
+     * Creates a new DWInteractionGraph from a DWInteractionGraph object
+     * and considering a time window filter.
+     *
+     * @param inputDWIG a DWInteractionGraph object
+     * @param timeFilter an integer array of length 2: [t0, t1]
+     *                   where t0 <= t1. The created DWInteractionGraph
+     *                   should only include those emails in the input
+     *                   DWInteractionGraph with send time t in the
+     *                   t0 <= t <= t1 range.
+     */
+    public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
+        // TODO: Implement this constructor
+    }
 
-    private Map<List<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
+    /**
+     * Creates a new DWInteractionGraph from a DWInteractionGraph object
+     * and considering a list of User IDs.
+     *
+     * @param inputDWIG a DWInteractionGraph object
+     * @param userFilter a List of User IDs. The created DWInteractionGraph
+     *                   should exclude those emails in the input
+     *                   DWInteractionGraph for which neither the sender
+     *                   nor the receiver exist in userFilter.
+     */
+    public DWInteractionGraph(DWInteractionGraph inputDWIG, List<Integer> userFilter) {
+        // TODO: Implement this constructor
+    }
+
+    private void addVertex(int sender) {
+        Vertex vertex = new Vertex(sender);
+        List<Edge> edges = new ArrayList<>();
+        this.DWG.put(vertex, edges);
+    }
+
+//    private void addEdge (int sender, int receiver, int weight) {
+//        List<Edge> senderEdge = this.get
+//    }
+
+    private Map<Integer, List<Integer>> getEmailWeightMap(List<List<Integer>> data) {
+        return makeWeightGraph(data);
+    }
+
+    private Map<Integer, List<Integer>> makeWeightGraph(List<List<Integer>> data) {
         // key: user A, value: weight between each user
-        Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
+        Map<Integer, List<Integer>> emailWeightMap = new HashMap<>();
         Set<List<Integer>> userSetToExclude = new HashSet<>();
 
         for (int i = 0; i < data.size(); i++) {
-            List<Integer> userList = new ArrayList<>();
-            userList.add(data.get(i).get(USER_A));
-            userList.add(data.get(i).get(USER_B));
-            if (!userSetToExclude.contains(userList)) {
-
-                emailWeightMap.put(userList, addAllWeight(data.get(i).get(USER_A),
-                    data.get(i).get(USER_B), data));
+            List<Integer> receiverAndWeightList = new ArrayList<>();
+            receiverAndWeightList.add(data.get(i).get(USER_B));
+            if (!userSetToExclude.contains(receiverAndWeightList)) {
+                emailWeightMap.put(data.get(i).get(USER_A), ********);
             }
-            userSetToExclude.add(userList);
+            userSetToExclude.add(receiverAndWeightList);
         }
 
         return emailWeightMap;
@@ -122,6 +117,25 @@ public class DWInteractionGraph {
         }
         return weight;
     }
+    /**
+     * @return a Set of Integers, where every element in the set is a User ID
+     * in this DWInteractionGraph.
+     */
+    public Set<Integer> getUserIDs() {
+        // TODO: Implement this getter method
+        return null;
+    }
+
+    /**
+     * @param sender the User ID of the sender in the email transaction.
+     * @param receiver the User ID of the receiver in the email transaction.
+     * @return the number of emails sent from the specified sender to the specified
+     * receiver in this DWInteractionGraph.
+     */
+    public int getEmailCount(int sender, int receiver) {
+        // TODO: Implement this getter method
+        return 0;
+    }
 
     private List<List<Integer>> makeDwGraph(String fileName) {
         List<List<Integer>> dataInteger = new ArrayList<>();
@@ -140,7 +154,6 @@ public class DWInteractionGraph {
         return dataInteger;
     }
 
-
     private List<Integer> stringToInteger(String fileLine) {
         List<Integer> integerList = new ArrayList<>();
         String[] fileLineParts = fileLine.split("\\s+");
@@ -151,90 +164,12 @@ public class DWInteractionGraph {
 
         return integerList;
     }
-
-    /**
-     * Creates a new DWInteractionGraph from a DWInteractionGraph object
-     * and considering a time window filter.
-     *
-     * @param inputDWIG  a DWInteractionGraph object
-     * @param timeFilter an integer array of length 2: [t0, t1]
-     *                   where t0 <= t1. The created DWInteractionGraph
-     *                   should only include those emails in the input
-     *                   DWInteractionGraph with send time t in the
-     *                   t0 <= t <= t1 range.
-     */
-    public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
-        List<List<Integer>> dataOfInput = inputDWIG.getData();
-        List<List<Integer>> UDWTimeConstrained = new ArrayList<>();
-
-        for (int i = 0; i < dataOfInput.size(); i++) {
-            int t = dataOfInput.get(i).get(TIME);
-            if (t >= timeFilter[0] && t <= timeFilter[1]) {
-                UDWTimeConstrained.add(dataOfInput.get(i));
-            }
-        }
-
-        getDWIG(UDWTimeConstrained);
-    }
-
-    /**
-     * Creates a new DWInteractionGraph from a DWInteractionGraph object
-     * and considering a list of User IDs.
-     *
-     * @param inputDWIG  a DWInteractionGraph object
-     * @param userFilter a List of User IDs. The created DWInteractionGraph
-     *                   should exclude those emails in the input
-     *                   DWInteractionGraph for which neither the sender
-     *                   nor the receiver exist in userFilter.
-     */
-    public DWInteractionGraph(DWInteractionGraph inputDWIG, List<Integer> userFilter) {
-        List<List<Integer>> data = new ArrayList<>();
-
-        for (int i = 0; i < inputDWIG.emailData.size(); i++) {
-            List<Integer> eachData = inputDWIG.emailData.get(i);
-            if ((userFilter.contains(eachData.get(USER_A)) ||
-                userFilter.contains(eachData.get(USER_B)))) {
-                data.add(eachData);
-            }
-        }
-
-        getDWIG(data);
-    }
-
-    /**
-     * @return a Set of Integers, where every element in the set is a User ID
-     * in this DWInteractionGraph.
-     */
-    public Set<Integer> getUserIDs() {
-        Set<Integer> IDSet = new HashSet<>(users);
-        return IDSet;
-    }
-
-    /**
-     * @param sender   the User ID of the sender in the email transaction.
-     * @param receiver the User ID of the receiver in the email transaction.
-     * @return the number of emails sent from the specified sender to the specified
-     * receiver in this DWInteractionGraph.
-     */
-    public int getEmailCount(int sender, int receiver) {
-        List<Integer> user = new ArrayList<>();
-        user.add(sender);
-        user.add(receiver);
-
-        if (emailWeightMap.containsKey(user)) {
-            return emailWeightMap.get(user);
-        } else {
-            return 0;
-        }
-    }
-
     /* ------- Task 2 ------- */
 
     /**
      * Given an int array, [t0, t1], reports email transaction details.
      * Suppose an email in this graph is sent at time t, then all emails
      * sent where t0 <= t <= t1 are included in this report.
-     *
      * @param timeWindow is an int array of size 2 [t0, t1] where t0<=t1.
      * @return an int array of length 3, with the following structure:
      * [NumberOfSenders, NumberOfReceivers, NumberOfEmailTransactions]
@@ -246,7 +181,6 @@ public class DWInteractionGraph {
 
     /**
      * Given a User ID, reports the specified User's email transaction history.
-     *
      * @param userID the User ID of the user for which the report will be
      *               created.
      * @return an int array of length 3 with the following structure:
@@ -260,7 +194,7 @@ public class DWInteractionGraph {
     }
 
     /**
-     * @param N               a positive number representing rank. N=1 means the most active.
+     * @param N a positive number representing rank. N=1 means the most active.
      * @param interactionType Represent the type of interaction to calculate the rank for
      *                        Can be SendOrReceive.Send or SendOrReceive.RECEIVE
      * @return the User ID for the Nth most active user in specified interaction type.
@@ -277,7 +211,6 @@ public class DWInteractionGraph {
     /**
      * performs breadth first search on the DWInteractionGraph object
      * to check path between user with userID1 and user with userID2.
-     *
      * @param userID1 the user ID for the first user
      * @param userID2 the user ID for the second user
      * @return if a path exists, returns aa list of user IDs
@@ -292,7 +225,6 @@ public class DWInteractionGraph {
     /**
      * performs depth first search on the DWInteractionGraph object
      * to check path between user with userID1 and user with userID2.
-     *
      * @param userID1 the user ID for the first user
      * @param userID2 the user ID for the second user
      * @return if a path exists, returns aa list of user IDs
@@ -309,7 +241,6 @@ public class DWInteractionGraph {
     /**
      * Read the MP README file carefully to understand
      * what is required from this method.
-     *
      * @param hours
      * @return the maximum number of users that can be polluted in N hours
      */
