@@ -35,7 +35,7 @@ public class UDWInteractionGraph {
      * The email interaction file will be in the resources directory.
      *
      * @param fileName the name of the file in the resources
-     * directory containing email interactions
+     *                 directory containing email interactions
      */
 
     public UDWInteractionGraph(String fileName) {
@@ -45,6 +45,7 @@ public class UDWInteractionGraph {
 
     /**
      * create a new UDWInteractionGraph using Data
+     *
      * @param data is not Null
      */
     private void getUDWIG(List<List<Integer>> data) {
@@ -62,7 +63,7 @@ public class UDWInteractionGraph {
         return emailData;
     }
 
-    private List<List<Integer>> getuserInteractions() {
+    protected List<List<Integer>> getuserInteractions() {
         return userInteractions;
     }
 
@@ -73,7 +74,6 @@ public class UDWInteractionGraph {
     private Map<Set<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
         return makeWeightGraph(data);
     }
-
 
     private void getRelations() {
         for (int i = 0; i < users.size(); i++) {
@@ -194,7 +194,6 @@ public class UDWInteractionGraph {
      *                   nor the receiver exist in userFilter.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, List<Integer> userFilter) {
-
         List<List<Integer>> data = new ArrayList<>();
 
         for (int i = 0; i < inputUDWIG.emailData.size(); i++) {
@@ -215,7 +214,7 @@ public class UDWInteractionGraph {
      * @param inputDWIG a DWInteractionGraph object
      */
     public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
-//        getUDWIG(inputDWIG.getEmailData());
+        getUDWIG(inputDWIG.getData());
     }
 
     /**
