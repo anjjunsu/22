@@ -58,7 +58,7 @@ public class DWInteractionGraph {
         return emailData;
     }
 
-    private List<List<Integer>> getuserInteractions() {
+    protected List<List<Integer>> getuserInteractions() {
         return userInteractions;
     }
 
