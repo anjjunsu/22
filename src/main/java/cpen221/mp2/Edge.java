@@ -11,6 +11,9 @@ class Edge {
         this.weight = weight;
     }
 
+    void printEdge() {
+        System.out.println("sender = " + sender + ", receiver = " + receiver + ", weight = " + weight);
+    }
     int getSender() { return sender; }
 
     int getReceiver() { return receiver;}

@@ -3,26 +3,24 @@ package cpen221.mp2;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class DWInteractionGraph {
     private static final int USER_A = 0;
     private static final int USER_B = 1;
     private static final int TIME = 2;
+    private static final int WEIGHT = 2;
 
 
     /* ------- Task 1 ------- */
     /* Building the Constructors */
 
-    private Map<Integer, List<Edge>> DWG = new HashMap<>();
+    private HashMap<Integer, LinkedList<Edge>> DWG;
     private List<List<Integer>> emailData = new ArrayList<>();
     private List<List<Integer>> emailDataWithWeight = new ArrayList<>();
     private Set<Integer> userSet = new HashSet<>(); // With no duplicate users
@@ -35,8 +33,12 @@ public class DWInteractionGraph {
      *                 directory containing email interactions
      */
     public DWInteractionGraph(String fileName) {
+        DWG = new HashMap<Integer, LinkedList<Edge>>();
         emailData = makeDwGraph(fileName);
         setEmailDataWithWeight();
+        makeDWG();
+
+
         // remove below
         for(List l : emailData) {
             System.out.println(l);
@@ -47,6 +49,7 @@ public class DWInteractionGraph {
         for (List<Integer> ll : emailDataWithWeight) {
             System.out.println(ll);
         }
+        printGraph();
     }
 
     /**
@@ -78,12 +81,34 @@ public class DWInteractionGraph {
         // TODO: Implement this constructor
     }
 
+    // Make DWG
+    private void makeDWG () {
+        for (Integer sender : userList) {
+            LinkedList<Edge> tempList = new LinkedList<>();
+            for (List data : emailDataWithWeight) {
+                if (data.get(USER_A) == sender) {
+                    // To prevent rep exposure. Not sure this is needed. But just in case
+                    int receiver = (int) data.get(USER_B);
+                    int weight = (int) data.get(WEIGHT);
+                    tempList.add(new Edge((int) sender, receiver, weight));
+                }
 
-//    private void addEdge (int sender, int receiver, int weight) {
-//        List<Edge> senderEdge = this.get
-//    }
+            }
+            DWG.put(sender, tempList);
+        }
+    }
 
-//
+    // For debugging purpose. Nothing special
+    private void printGraph() {
+        for (Integer sender : DWG.keySet()) {
+            List<Edge> temp = new LinkedList<>();
+            temp = DWG.get(sender);
+
+            for (Edge edge : temp) {
+                edge.printEdge();
+            }
+        }
+    }
     /**
      * @return a Set of Integers, where every element in the set is a User ID
      * in this DWInteractionGraph.
