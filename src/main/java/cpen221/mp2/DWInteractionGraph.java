@@ -278,8 +278,26 @@ public class DWInteractionGraph {
      */
     public int[] ReportOnUser(int userID) {
         int[] report = {0, 0, 0};
+        int numSent = 0;
+        int numReceive = 0;
+        int uniqueInteraction = 0;
+        Set<List<Integer>> temp = new HashSet<>();
 
+        for(List l : emailDataWithWeight) {
+            if ((Integer) l.get(USER_A) == userID) {
+                numSent++;
+                temp.add(l);
+            }
+            if ((Integer) l.get(USER_B) == userID) {
+                numReceive++;
+                temp.add(l);
+            }
 
+        }
+
+        report[0] = numSent;
+        report[1] = numReceive;
+        report[2] = temp.size();
         return report;
     }
 
