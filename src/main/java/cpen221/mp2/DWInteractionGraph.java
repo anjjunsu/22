@@ -22,7 +22,7 @@ public class DWInteractionGraph {
     /* ------- Task 1 ------- */
     /* Building the Constructors */
 
-    private Map<Vertex, List<Edge>> DWG = new HashMap<>();
+    private Map<Integer, List<Edge>> DWG = new HashMap<>();
     private List<List<Integer>> emailData = new ArrayList<>();
     private List<List<Integer>> emailDataWithWeight = new ArrayList<>();
     private Set<Integer> userSet = new HashSet<>(); // With no duplicate users
@@ -78,11 +78,6 @@ public class DWInteractionGraph {
         // TODO: Implement this constructor
     }
 
-    private void addVertex(int sender) {
-        Vertex vertex = new Vertex(sender);
-        List<Edge> edges = new ArrayList<>();
-        this.DWG.put(vertex, edges);
-    }
 
 //    private void addEdge (int sender, int receiver, int weight) {
 //        List<Edge> senderEdge = this.get
