@@ -60,7 +60,7 @@ public class DWInteractionGraph {
             LinkedList<Edge> tempList = new LinkedList<>();
             for (List data : emailDataWithWeight) {
                 if (data.get(USER_A) == sender) {
-                    // To prevent rep exposure. Not sure this is needed. But just in case
+                    // To prevent rep exposure. Not sure that this will be needed. But just in case
                     int receiver = (int) data.get(USER_B);
                     int weight = (int) data.get(WEIGHT);
                     tempList.add(new Edge((int) sender, receiver, weight));
@@ -84,7 +84,7 @@ public class DWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
-        List<List<Integer>> dataOfInput = new ArrayList<>(inputDWIG.getData());
+        List<List<Integer>> dataOfInput = new ArrayList<>(inputDWIG.getDWI_data());
         List<List<Integer>> timeFilteredData = new ArrayList<>();
         for (List l : dataOfInput) {
             if ((int) l.get(TIME) >= timeFilter[0] && (int) l.get(TIME) <= timeFilter[1]) {
@@ -115,7 +115,7 @@ public class DWInteractionGraph {
      *                   nor the receiver exist in userFilter.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, List<Integer> userFilter) {
-        List<List<Integer>> inputData = new ArrayList<>(inputDWIG.getData());
+        List<List<Integer>> inputData = new ArrayList<>(inputDWIG.getDWI_data());
         Set<List<Integer>> userFilteredSet = new HashSet<>();
         List<List<Integer>> userFilteredData;
 
@@ -228,7 +228,7 @@ public class DWInteractionGraph {
     }
 
     // defensive copying return
-    private List<List<Integer>> getData() {
+    protected List<List<Integer>> getDWI_data() {
         return new ArrayList<>(this.emailData);
     }
     /* ------- Task 2 ------- */
@@ -242,8 +242,29 @@ public class DWInteractionGraph {
      * [NumberOfSenders, NumberOfReceivers, NumberOfEmailTransactions]
      */
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
-        // TODO: Implement this method
-        return null;
+        // I can use DWI constructor with time filter. But I feel like it will mutate original DWI.
+        // Not sure. But easy to change implementation later
+        int[] report = {0, 0, 0};
+        int numEmailTransaction = 0;
+        List<List<Integer>> data = new ArrayList<>(emailData);
+        List<List<Integer>> timeFilteredData = new ArrayList<>();
+        Set<Integer> senders = new HashSet<>();
+        Set<Integer> receivers = new HashSet<>();
+
+        for (List l : data) {
+            if ((int) l.get(TIME) >= timeWindow[0] && (int) l.get(TIME) <= timeWindow[1]) {
+                timeFilteredData.add(l);
+                numEmailTransaction++;
+            }
+        }
+        for (List l : timeFilteredData) {
+            senders.add((Integer) l.get(USER_A));
+            receivers.add((Integer) l.get(USER_B));
+        }
+        report[0] = senders.size();
+        report[1] = receivers.size();
+        report[2] = numEmailTransaction;
+        return report;
     }
 
     /**
@@ -256,8 +277,10 @@ public class DWInteractionGraph {
      * returns [0, 0, 0].
      */
     public int[] ReportOnUser(int userID) {
-        // TODO: Implement this method
-        return null;
+        int[] report = {0, 0, 0};
+
+
+        return report;
     }
 
     /**
