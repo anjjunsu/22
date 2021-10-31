@@ -3,6 +3,7 @@ package cpen221.mp2;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,9 +24,9 @@ public class DWInteractionGraph {
 
     private Map<Vertex, List<Edge>> DWG = new HashMap<>();
     private List<List<Integer>> emailData = new ArrayList<>();
-    private Map<Integer, List<Integer>> emailWeightMap = new HashMap<>();
-
-
+    private List<List<Integer>> emailDataWithWeight = new ArrayList<>();
+    private Set<Integer> userSet = new HashSet<>(); // With no duplicate users
+    private List<Integer> userList; // Just convert userSet to userList b/c List is easier to work w/.
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
      * The email interaction file will be in the resources directory.
@@ -35,10 +36,16 @@ public class DWInteractionGraph {
      */
     public DWInteractionGraph(String fileName) {
         emailData = makeDwGraph(fileName);
-        emailWeightMap = getEmailWeightMap(emailData);
-
+        setEmailDataWithWeight();
+        // remove below
         for(List l : emailData) {
             System.out.println(l);
+        }
+        System.out.println("User Set"+ userSet);
+        System.out.println("User List is " + userList);
+        System.out.println("===Email data with weight===");
+        for (List<Integer> ll : emailDataWithWeight) {
+            System.out.println(ll);
         }
     }
 
@@ -81,49 +88,13 @@ public class DWInteractionGraph {
 //        List<Edge> senderEdge = this.get
 //    }
 
-    private Map<Integer, List<Integer>> getEmailWeightMap(List<List<Integer>> data) {
-        return makeWeightGraph(data);
-    }
-
-    private Map<Integer, List<Integer>> makeWeightGraph(List<List<Integer>> data) {
-        // key: user A, value: weight between each user
-        Map<Integer, List<Integer>> emailWeightMap = new HashMap<>();
-        Set<List<Integer>> userSetToExclude = new HashSet<>();
-
-        for (int i = 0; i < data.size(); i++) {
-            List<Integer> receiverAndWeightList = new ArrayList<>();
-            receiverAndWeightList.add(data.get(i).get(USER_B));
-            if (!userSetToExclude.contains(receiverAndWeightList)) {
-                emailWeightMap.put(data.get(i).get(USER_A), ********);
-            }
-            userSetToExclude.add(receiverAndWeightList);
-        }
-
-        return emailWeightMap;
-    }
-
-    private int addAllWeight(int userA, int userB, List<List<Integer>> data) {
-        List<List<Integer>> dataNeeded = new ArrayList<>();
-        for (List<Integer> integers : data) {
-            int user1 = integers.get(USER_A);
-            int user2 = integers.get(USER_B);
-            if ((user1 == userA) && (user2 == userB)) {
-                dataNeeded.add(integers);
-            }
-        }
-        int weight = 0;
-        for (int i = 0; i < dataNeeded.size(); i++) {
-            weight++;
-        }
-        return weight;
-    }
+//
     /**
      * @return a Set of Integers, where every element in the set is a User ID
      * in this DWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
-        // TODO: Implement this getter method
-        return null;
+        return new HashSet<>(userSet);
     }
 
     /**
@@ -137,20 +108,43 @@ public class DWInteractionGraph {
         return 0;
     }
 
+    // Make a data [sender, receiver, weight]
+    private void setEmailDataWithWeight() {
+
+        for (Integer sender : userList) {
+            for (Integer receiver : userList) {
+                List<Integer> tempList = new ArrayList<>();
+                Integer weight = 0;
+                for (List<Integer> data : emailData) {
+                    if (data.get(USER_A) == sender && data.get(USER_B) == receiver) {
+                        weight++;
+                    }
+                }
+                if (weight > 0) {
+                    tempList.add(sender);
+                    tempList.add(receiver);
+                    tempList.add(weight);
+
+                    emailDataWithWeight.add(tempList);
+                }
+            }
+        }
+    }
     private List<List<Integer>> makeDwGraph(String fileName) {
         List<List<Integer>> dataInteger = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             for (String fileLine = reader.readLine();
-                 fileLine != null;
-                 fileLine = reader.readLine()) {
+                fileLine != null;
+                fileLine = reader.readLine()) {
                 dataInteger.add(stringToInteger(fileLine));
+
             }
             reader.close();
         } catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
-
+        userList = new ArrayList<>(userSet);
         return dataInteger;
     }
 
@@ -161,6 +155,8 @@ public class DWInteractionGraph {
         for (String fileLinePart : fileLineParts) {
             integerList.add(Integer.parseInt(fileLinePart));
         }
+        userSet.add(integerList.get(USER_A));
+        userSet.add(integerList.get(USER_B));
 
         return integerList;
     }
