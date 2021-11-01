@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class DWInteractionGraph {
@@ -285,21 +286,28 @@ public class DWInteractionGraph {
         int uniqueInteraction = 0;
         Set<List<Integer>> temp = new HashSet<>();
 
-        for(List l : emailDataWithWeight) {
-            if ((Integer) l.get(USER_A) == userID) {
-                numSent++;
-                temp.add(l);
-            }
-            if ((Integer) l.get(USER_B) == userID) {
-                numReceive++;
-                temp.add(l);
-            }
+        numSent = DWG.get((Integer) userID).size();
 
+        for (Integer i : DWG.keySet()) {
+            for (Edge e : DWG.get(i)) {
+                if (!(e.getReceiver() == userID && e.getSender() == userID)) {
+                    if (e.getSender() == userID) {
+                        uniqueInteraction++;
+                    }
+                    if (e.getReceiver() == userID){
+                        uniqueInteraction++;
+                    }
+                }
+
+                if (e.getReceiver() == userID) {
+                    numReceive++;
+
+                }
+            }
         }
-
         report[0] = numSent;
         report[1] = numReceive;
-        report[2] = temp.size();
+        report[2] = uniqueInteraction;
         return report;
     }
 
