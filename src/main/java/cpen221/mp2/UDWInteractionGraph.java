@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -39,7 +40,7 @@ public class UDWInteractionGraph {
      */
 
     public UDWInteractionGraph(String fileName) {
-        emailData = makeUdwGraph(fileName);
+        emailData = Collections.unmodifiableList(makeData(fileName));
         getUDWIG(emailData);
     }
 
@@ -59,7 +60,7 @@ public class UDWInteractionGraph {
         getRelations();
     }
 
-    private List<List<Integer>> getData() {
+    private List<List<Integer>> getUDWI_data() {
         return emailData;
     }
 
@@ -127,7 +128,7 @@ public class UDWInteractionGraph {
         return weight;
     }
 
-    private List<List<Integer>> makeUdwGraph(String fileName) {
+    private List<List<Integer>> makeData(String fileName) {
         List<List<Integer>> dataInteger = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -169,7 +170,7 @@ public class UDWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
-        List<List<Integer>> dataOfInput = inputUDWIG.getData();
+        List<List<Integer>> dataOfInput = inputUDWIG.getUDWI_data();
         List<List<Integer>> UDWTimeConstrained = new ArrayList<>();
 
         for (int i = 0; i < dataOfInput.size(); i++) {
@@ -198,14 +199,13 @@ public class UDWInteractionGraph {
 
         for (int i = 0; i < inputUDWIG.emailData.size(); i++) {
             List<Integer> eachData = inputUDWIG.emailData.get(i);
-            if ((userFilter.contains(eachData.get(USER_A)) &&
+            if ((userFilter.contains(eachData.get(USER_A)) ||
                 userFilter.contains(eachData.get(USER_B)))) {
                 data.add(eachData);
             }
         }
 
         getUDWIG(data);
-        users = inputUDWIG.users;
     }
 
     /**
