@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UDWInteractionGraph {
     private static final int USER_A = 0;
@@ -53,11 +53,11 @@ public class UDWInteractionGraph {
         emailData = data;
         emailWeightMap = getEmailWeightMap(data);
         // get userInteractions
+        userInteractions = new ArrayList<>();
         emailWeightMap.keySet().forEach(x -> userInteractions.add(x.stream().toList()));
         Set<Integer> userSet = new HashSet<>();
         userInteractions.forEach(userSet::addAll);
         users = userSet.stream().toList();
-        System.out.println(emailWeightMap);
         getRelations();
     }
 
@@ -237,16 +237,16 @@ public class UDWInteractionGraph {
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
         List<List<Integer>> dataOfInput = inputUDWIG.getUDWI_data();
-        List<List<Integer>> UDWTimeConstrained = new ArrayList<>();
+        List<List<Integer>> dataTimeConstrained = new ArrayList<>();
 
         for (int i = 0; i < dataOfInput.size(); i++) {
             int t = dataOfInput.get(i).get(TIME);
             if (t >= timeFilter[0] && t <= timeFilter[1]) {
-                UDWTimeConstrained.add(dataOfInput.get(i));
+                dataTimeConstrained.add(dataOfInput.get(i));
             }
         }
 
-        getUDWIG(UDWTimeConstrained);
+        getUDWIG(dataTimeConstrained);
     }
 
 
@@ -326,8 +326,30 @@ public class UDWInteractionGraph {
      * [NumberOfUsers, NumberOfEmailTransactions]
      */
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
-        // TODO: Implement this method
-        return null;
+        List<List<Integer>> dataToPreserve = emailData;
+        List<List<Integer>> dataOfInput = emailData;
+        List<List<Integer>> dataTimeConstrained = new ArrayList<>();
+        int[] reportActivity = new int[2];
+        int totalTransaction = 0;
+        List<Integer> weightList = new ArrayList<>();
+
+        for (int i = 0; i < dataOfInput.size(); i++) {
+            int t = dataOfInput.get(i).get(TIME);
+            if (t >= timeWindow[0] && t <= timeWindow[1]) {
+                dataTimeConstrained.add(dataOfInput.get(i));
+            }
+        }
+        getUDWIG(dataTimeConstrained);
+        reportActivity[0] = getUsers().size();
+        emailWeightMap.forEach((a, b) -> weightList.add(b));
+        for (Integer integer : weightList) {
+            totalTransaction += integer;
+        }
+        reportActivity[1] = totalTransaction;
+
+        // get original UDWIG
+        getUDWIG(dataToPreserve);
+        return reportActivity;
     }
 
     /**
