@@ -61,21 +61,51 @@ public class UDWInteractionGraph {
         getRelations();
     }
 
+    /**
+     * get email data which contains sender, receiver and time converted to integer from string
+     *
+     * @return email data in integer form
+     */
+
     private List<List<Integer>> getUDWI_data() {
         return emailData;
     }
+
+    /**
+     * get user interactions, also known as edges
+     *
+     * @return user interactions
+     */
 
     protected List<List<Integer>> getuserInteractions() {
         return userInteractions;
     }
 
+    /**
+     * get users, also known as nodes
+     *
+     * @return users
+     */
+
     private List<Integer> getUsers() {
         return users;
     }
 
+    /**
+     * get weight map
+     *
+     * @param data data consists of sender, receiver, and time converted to integer from string
+     * @return weightMap which represents how many times the emails have been sent between two
+     * users
+     */
+
     private Map<List<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
         return makeWeightGraph(data);
     }
+
+    /**
+     * make UDWIG by putting each user and his or her interactions with other users
+     */
 
     private void getRelations() {
         for (int i = 0; i < users.size(); i++) {
@@ -92,6 +122,14 @@ public class UDWInteractionGraph {
             UDWIG.put(eachUser, adjacencySet.stream().toList());
         }
     }
+
+    /**
+     * make weight map
+     *
+     * @param data data consists of sender, receiver, and time converted to integer from string
+     * @return weightMap which represents how many times the emails have been sent between two
+     * users
+     */
 
     private Map<List<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
         // key: user A, value: weight between each user
@@ -116,6 +154,15 @@ public class UDWInteractionGraph {
         return emailWeightMap;
     }
 
+    /**
+     * add all weights between user1 and user2
+     *
+     * @param userA user1
+     * @param userB user2
+     * @param data  email data
+     * @return count of emails sent between user1 and user2
+     */
+
     private int addAllWeight(int userA, int userB, List<List<Integer>> data) {
         List<List<Integer>> dataNeeded = new ArrayList<>();
         for (List<Integer> integers : data) {
@@ -132,6 +179,14 @@ public class UDWInteractionGraph {
         }
         return weight;
     }
+
+    /**
+     * convert data from string to integer
+     *
+     * @param fileName file name
+     * @return data that has been converted from string to integer. It consists of sender,
+     * receiver and time
+     */
 
     private List<List<Integer>> makeData(String fileName) {
         List<List<Integer>> dataInteger = new ArrayList<>();
@@ -150,6 +205,12 @@ public class UDWInteractionGraph {
         return dataInteger;
     }
 
+    /**
+     * converts from string to integer
+     *
+     * @param fileLine each line of file
+     * @return each fileline that has been converted from string to integer
+     */
 
     private List<Integer> stringToInteger(String fileLine) {
         List<Integer> integerList = new ArrayList<>();
@@ -249,7 +310,7 @@ public class UDWInteractionGraph {
 
         if (emailWeightMap.containsKey(user)) {
             return emailWeightMap.get(user);
-        } else if(emailWeightMap.containsKey(userComplement)){
+        } else if (emailWeightMap.containsKey(userComplement)) {
             return emailWeightMap.get(userComplement);
         } else {
             return 0;
@@ -290,6 +351,10 @@ public class UDWInteractionGraph {
         // TODO: Implement this method
         return -1;
     }
+
+
+
+
 
     /* ------- Task 3 ------- */
 
