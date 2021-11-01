@@ -25,7 +25,7 @@ public class UDWInteractionGraph {
     /* ------- Task 1 ------- */
     /* Building the Constructors */
 
-    private Map<Set<Integer>, Integer> emailWeightMap = new HashMap<>();
+    private Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
     private List<List<Integer>> emailData = new ArrayList<>();
     private List<Integer> users = new LinkedList<>();
     private List<List<Integer>> userInteractions = new LinkedList<>();
@@ -57,6 +57,7 @@ public class UDWInteractionGraph {
         Set<Integer> userSet = new HashSet<>();
         userInteractions.forEach(userSet::addAll);
         users = userSet.stream().toList();
+        System.out.println(emailWeightMap);
         getRelations();
     }
 
@@ -72,7 +73,7 @@ public class UDWInteractionGraph {
         return users;
     }
 
-    private Map<Set<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
+    private Map<List<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
         return makeWeightGraph(data);
     }
 
@@ -92,20 +93,24 @@ public class UDWInteractionGraph {
         }
     }
 
-    private Map<Set<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
+    private Map<List<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
         // key: user A, value: weight between each user
-        Map<Set<Integer>, Integer> emailWeightMap = new HashMap<>();
-        Set<Set<Integer>> userSetToExclude = new HashSet<>();
+        Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
+        Set<List<Integer>> userListToExclude = new HashSet<>();
 
         for (int i = 0; i < data.size(); i++) {
-            Set<Integer> userSet = new HashSet<>();
-            userSet.add(data.get(i).get(USER_A));
-            userSet.add(data.get(i).get(USER_B));
-            if (!userSetToExclude.contains(userSet)) {
-                emailWeightMap.put(userSet, addAllWeight(data.get(i).get(USER_A),
+            List<Integer> userList = new ArrayList<>();
+            List<Integer> userListCompliment = new ArrayList<>();
+            userList.add(data.get(i).get(USER_A));
+            userList.add(data.get(i).get(USER_B));
+            userListCompliment.add(data.get(i).get(USER_B));
+            userListCompliment.add(data.get(i).get(USER_A));
+            if (!userListToExclude.contains(userList)) {
+                emailWeightMap.put(userList, addAllWeight(data.get(i).get(USER_A),
                     data.get(i).get(USER_B), data));
             }
-            userSetToExclude.add(userSet);
+            userListToExclude.add(userList);
+            userListToExclude.add(userListCompliment);
         }
 
         return emailWeightMap;
@@ -116,8 +121,8 @@ public class UDWInteractionGraph {
         for (List<Integer> integers : data) {
             int user1 = integers.get(USER_A);
             int user2 = integers.get(USER_B);
-            if ((user1 == userA || user1 == userB) &&
-                (user2 == userA || user2 == userB)) {
+            if ((user1 == userA && user2 == userB) ||
+                (user1 == userB && user2 == userA)) {
                 dataNeeded.add(integers);
             }
         }
@@ -214,7 +219,8 @@ public class UDWInteractionGraph {
      * @param inputDWIG a DWInteractionGraph object
      */
     public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
-        getUDWIG(inputDWIG.getDWI_data());
+        emailData = inputDWIG.getDWI_data();
+        getUDWIG(emailData);
     }
 
     /**
