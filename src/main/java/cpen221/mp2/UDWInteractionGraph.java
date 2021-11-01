@@ -214,7 +214,7 @@ public class UDWInteractionGraph {
      * @param inputDWIG a DWInteractionGraph object
      */
     public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
-        getUDWIG(inputDWIG.getData());
+        getUDWIG(inputDWIG.getDWI_data());
     }
 
     /**
