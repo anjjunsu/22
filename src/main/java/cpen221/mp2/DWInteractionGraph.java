@@ -21,7 +21,7 @@ public class DWInteractionGraph {
     /* Building the Constructors */
 
     private HashMap<Integer, LinkedList<Edge>> DWG;
-    private List<List<Integer>> emailData = new ArrayList<>();
+    private List<List<Integer>> emailData;
     private List<List<Integer>> emailDataWithWeight;
     private Set<Integer> userSet = new HashSet<>(); // With no duplicate users
     private List<Integer> userList; // Just convert userSet to userList b/c List is easier to work w/.
@@ -33,7 +33,7 @@ public class DWInteractionGraph {
      *                 directory containing email interactions
      */
     public DWInteractionGraph(String fileName) {
-        emailData = processData(fileName);
+        emailData = new ArrayList<>(processData(fileName));
         setEmailDataWithWeight(emailData);
 
         makeDWI();
@@ -92,6 +92,7 @@ public class DWInteractionGraph {
             }
         }
 
+        emailData = new ArrayList<>(timeFilteredData);
         setEmailDataWithWeight(timeFilteredData);
 
         makeDWI();
@@ -128,6 +129,7 @@ public class DWInteractionGraph {
         }
 
         userFilteredData = new ArrayList<>(userFilteredSet);
+        emailData = new ArrayList<>(userFilteredData);
         setEmailDataWithWeight(userFilteredData);
 
         makeDWI();
