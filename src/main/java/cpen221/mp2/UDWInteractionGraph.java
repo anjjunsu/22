@@ -100,17 +100,17 @@ public class UDWInteractionGraph {
 
         for (int i = 0; i < data.size(); i++) {
             List<Integer> userList = new ArrayList<>();
-            List<Integer> userListCompliment = new ArrayList<>();
+            List<Integer> userListComplement = new ArrayList<>();
             userList.add(data.get(i).get(USER_A));
             userList.add(data.get(i).get(USER_B));
-            userListCompliment.add(data.get(i).get(USER_B));
-            userListCompliment.add(data.get(i).get(USER_A));
+            userListComplement.add(data.get(i).get(USER_B));
+            userListComplement.add(data.get(i).get(USER_A));
             if (!userListToExclude.contains(userList)) {
                 emailWeightMap.put(userList, addAllWeight(data.get(i).get(USER_A),
                     data.get(i).get(USER_B), data));
             }
             userListToExclude.add(userList);
-            userListToExclude.add(userListCompliment);
+            userListToExclude.add(userListComplement);
         }
 
         return emailWeightMap;
@@ -239,12 +239,18 @@ public class UDWInteractionGraph {
      * receiver in this DWInteractionGraph.
      */
     public int getEmailCount(int sender, int receiver) {
-        Set<Integer> user = new HashSet<>();
+        List<Integer> user = new ArrayList<>();
+        List<Integer> userComplement = new ArrayList<>();
+
         user.add(sender);
         user.add(receiver);
+        userComplement.add(receiver);
+        userComplement.add(sender);
 
         if (emailWeightMap.containsKey(user)) {
             return emailWeightMap.get(user);
+        } else if(emailWeightMap.containsKey(userComplement)){
+            return emailWeightMap.get(userComplement);
         } else {
             return 0;
         }
