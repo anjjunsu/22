@@ -283,28 +283,26 @@ public class DWInteractionGraph {
         int[] report = {0, 0, 0};
         int numSent = 0;
         int numReceive = 0;
-        int uniqueInteraction = 0;
-        Set<List<Integer>> temp = new HashSet<>();
+        int subtract = 0;
+        int uniqueInteraction = 0;      // Just count number of edges related to the user
+        Set<Integer> temp = new HashSet<>();
 
-        numSent = DWG.get((Integer) userID).size();
 
         for (Integer i : DWG.keySet()) {
             for (Edge e : DWG.get(i)) {
-                if (!(e.getReceiver() == userID && e.getSender() == userID)) {
-                    if (e.getSender() == userID) {
-                        uniqueInteraction++;
-                    }
-                    if (e.getReceiver() == userID){
-                        uniqueInteraction++;
-                    }
-                }
-
                 if (e.getReceiver() == userID) {
-                    numReceive++;
-
+                    numReceive += e.getWeight();
+                    temp.add( (Integer) e.getSender());
+                }
+                if (e.getSender() == userID) {
+                    numSent += e.getWeight();
+                    temp.add((Integer) e.getReceiver());
                 }
             }
         }
+
+        uniqueInteraction = temp.size();
+
         report[0] = numSent;
         report[1] = numReceive;
         report[2] = uniqueInteraction;
