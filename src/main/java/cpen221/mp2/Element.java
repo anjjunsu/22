@@ -1,24 +1,20 @@
 package cpen221.mp2;
 
-public class Element {
+class Element {
     private int index;
     private int value;
 
-    public Element(int index, int value) {
+    Element(int index, int value) {
         this.index = index;
         this.value = value;
     }
 
-    public int getValue() {
+    int getIndex() { return this.index; }
+    int getValue() {
         return this.value;
     }
 
-    @Override
-    public String toString() {
-        return value + " " + index;
-    }
-
-    public void print() {
-        System.out.println(this);
+    void print() {
+        System.out.println("index = " + this.index + " value = " + this.value);
     }
 }

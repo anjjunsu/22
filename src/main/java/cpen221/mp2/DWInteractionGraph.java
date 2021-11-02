@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DWInteractionGraph {
     private static final int USER_A = 0;
@@ -23,7 +24,7 @@ public class DWInteractionGraph {
     private HashMap<Integer, LinkedList<Edge>> DWG;
     private List<List<Integer>> emailData;
     private List<List<Integer>> emailDataWithWeight;
-    private Set<Integer> userSet = new HashSet<>(); // With no duplicate users
+    private Set<Integer> userSet; // With no duplicate users
     private List<Integer> userList; // Just convert userSet to userList b/c List is easier to work w/.
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
@@ -132,6 +133,11 @@ public class DWInteractionGraph {
         emailData = new ArrayList<>(userFilteredData);
         setEmailDataWithWeight(userFilteredData);
 
+        // remove
+        System.out.println("email data with weight after user filter: ");
+        for(List l : emailDataWithWeight) {
+            System.out.println(l);
+        }
         makeDWI();
 
         // Remove
@@ -140,7 +146,7 @@ public class DWInteractionGraph {
         printGraph();
     }
 
-    // For debugging purpose. Nothing special
+    // Remove. For debugging purpose. Nothing special
     private void printGraph() {
         for (Integer sender : DWG.keySet()) {
             System.out.println("-------------------------------------");
@@ -176,7 +182,7 @@ public class DWInteractionGraph {
     // Make a data [sender, receiver, weight]
     private void setEmailDataWithWeight(List<List<Integer>> data) {
         emailDataWithWeight = new ArrayList<>();
-
+        userSet = new HashSet<>();
         data.stream().forEach(x -> userSet.add(x.get(USER_A)));
         data.stream().forEach(x -> userSet.add(x.get(USER_B)));
 
@@ -321,18 +327,9 @@ public class DWInteractionGraph {
         List<Element> sendRanking = new ArrayList<>();
         List<Element> receiveRanking = new ArrayList<>();
         Element wantedUser;
+        int validSendRank = 0;
+        int validReceiveRank = 0;
         int wantedData = 0;
-
-        // return -1 when N is higher than number of unique users
-        if (N > userList.size()) { return -1; }
-
-//        for (Integer i : DWG.keySet()) {
-//            int numSend = 0;
-//            for (Edge e : DWG.get(i)) {
-//                numSend += e.getWeight();
-//            }
-//            sendRanking.add(new Element((int) i, numSend);
-//        }
 
         for (Integer user : userList) {
             int numSend = 0;
@@ -353,13 +350,17 @@ public class DWInteractionGraph {
         receiveRanking.sort(new NumberComparator());
 
         if (interactionType == SendOrReceive.SEND) {
+            validSendRank = sendRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList()).size();
+            if (N > validSendRank) { return -1; }
             wantedUser = sendRanking.get(N - 1);
-            wantedData = wantedUser.getValue();
+            wantedData = wantedUser.getIndex();
         }
 
         if (interactionType == SendOrReceive.RECEIVE) {
+            validReceiveRank = receiveRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList()).size();
+            if (N > validReceiveRank) { return -1; }
             wantedUser = receiveRanking.get(N-1);
-            wantedData = wantedUser.getValue();
+            wantedData = wantedUser.getIndex();
         }
         return wantedData;
     }
