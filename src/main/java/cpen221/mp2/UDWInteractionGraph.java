@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UDWInteractionGraph {
     private static final int USER_A = 0;
@@ -24,7 +27,7 @@ public class UDWInteractionGraph {
     /* ------- Task 1 ------- */
     /* Building the Constructors */
 
-    private Map<Set<Integer>, Integer> emailWeightMap = new HashMap<>();
+    private Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
     private List<List<Integer>> emailData = new ArrayList<>();
     private List<Integer> users = new LinkedList<>();
     private List<List<Integer>> userInteractions = new LinkedList<>();
@@ -39,7 +42,7 @@ public class UDWInteractionGraph {
      */
 
     public UDWInteractionGraph(String fileName) {
-        emailData = makeUdwGraph(fileName);
+        emailData = Collections.unmodifiableList(makeData(fileName));
         getUDWIG(emailData);
     }
 
@@ -52,6 +55,7 @@ public class UDWInteractionGraph {
         emailData = data;
         emailWeightMap = getEmailWeightMap(data);
         // get userInteractions
+        userInteractions = new ArrayList<>();
         emailWeightMap.keySet().forEach(x -> userInteractions.add(x.stream().toList()));
         Set<Integer> userSet = new HashSet<>();
         userInteractions.forEach(userSet::addAll);
@@ -59,21 +63,51 @@ public class UDWInteractionGraph {
         getRelations();
     }
 
-    private List<List<Integer>> getData() {
+    /**
+     * get email data which contains sender, receiver and time converted to integer from string
+     *
+     * @return email data in integer form
+     */
+
+    private List<List<Integer>> getUDWI_data() {
         return emailData;
     }
+
+    /**
+     * get user interactions, also known as edges
+     *
+     * @return user interactions
+     */
 
     protected List<List<Integer>> getuserInteractions() {
         return userInteractions;
     }
 
+    /**
+     * get users, also known as nodes
+     *
+     * @return users
+     */
+
     private List<Integer> getUsers() {
         return users;
     }
 
-    private Map<Set<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
+    /**
+     * get weight map
+     *
+     * @param data data consists of sender, receiver, and time converted to integer from string
+     * @return weightMap which represents how many times the emails have been sent between two
+     * users
+     */
+
+    private Map<List<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
         return makeWeightGraph(data);
     }
+
+    /**
+     * make UDWIG by putting each user and his or her interactions with other users
+     */
 
     private void getRelations() {
         for (int i = 0; i < users.size(); i++) {
@@ -91,32 +125,53 @@ public class UDWInteractionGraph {
         }
     }
 
-    private Map<Set<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
+    /**
+     * make weight map
+     *
+     * @param data data consists of sender, receiver, and time converted to integer from string
+     * @return weightMap which represents how many times the emails have been sent between two
+     * users
+     */
+
+    private Map<List<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
         // key: user A, value: weight between each user
-        Map<Set<Integer>, Integer> emailWeightMap = new HashMap<>();
-        Set<Set<Integer>> userSetToExclude = new HashSet<>();
+        Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
+        Set<List<Integer>> userListToExclude = new HashSet<>();
 
         for (int i = 0; i < data.size(); i++) {
-            Set<Integer> userSet = new HashSet<>();
-            userSet.add(data.get(i).get(USER_A));
-            userSet.add(data.get(i).get(USER_B));
-            if (!userSetToExclude.contains(userSet)) {
-                emailWeightMap.put(userSet, addAllWeight(data.get(i).get(USER_A),
+            List<Integer> userList = new ArrayList<>();
+            List<Integer> userListComplement = new ArrayList<>();
+            userList.add(data.get(i).get(USER_A));
+            userList.add(data.get(i).get(USER_B));
+            userListComplement.add(data.get(i).get(USER_B));
+            userListComplement.add(data.get(i).get(USER_A));
+            if (!userListToExclude.contains(userList)) {
+                emailWeightMap.put(userList, addAllWeight(data.get(i).get(USER_A),
                     data.get(i).get(USER_B), data));
             }
-            userSetToExclude.add(userSet);
+            userListToExclude.add(userList);
+            userListToExclude.add(userListComplement);
         }
 
         return emailWeightMap;
     }
+
+    /**
+     * add all weights between user1 and user2
+     *
+     * @param userA user1
+     * @param userB user2
+     * @param data  email data
+     * @return count of emails sent between user1 and user2
+     */
 
     private int addAllWeight(int userA, int userB, List<List<Integer>> data) {
         List<List<Integer>> dataNeeded = new ArrayList<>();
         for (List<Integer> integers : data) {
             int user1 = integers.get(USER_A);
             int user2 = integers.get(USER_B);
-            if ((user1 == userA || user1 == userB) &&
-                (user2 == userA || user2 == userB)) {
+            if ((user1 == userA && user2 == userB) ||
+                (user1 == userB && user2 == userA)) {
                 dataNeeded.add(integers);
             }
         }
@@ -127,7 +182,15 @@ public class UDWInteractionGraph {
         return weight;
     }
 
-    private List<List<Integer>> makeUdwGraph(String fileName) {
+    /**
+     * convert data from string to integer
+     *
+     * @param fileName file name
+     * @return data that has been converted from string to integer. It consists of sender,
+     * receiver and time
+     */
+
+    private List<List<Integer>> makeData(String fileName) {
         List<List<Integer>> dataInteger = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -144,6 +207,12 @@ public class UDWInteractionGraph {
         return dataInteger;
     }
 
+    /**
+     * converts from string to integer
+     *
+     * @param fileLine each line of file
+     * @return each fileline that has been converted from string to integer
+     */
 
     private List<Integer> stringToInteger(String fileLine) {
         List<Integer> integerList = new ArrayList<>();
@@ -169,17 +238,17 @@ public class UDWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
-        List<List<Integer>> dataOfInput = inputUDWIG.getData();
-        List<List<Integer>> UDWTimeConstrained = new ArrayList<>();
+        List<List<Integer>> dataOfInput = inputUDWIG.getUDWI_data();
+        List<List<Integer>> dataTimeConstrained = new ArrayList<>();
 
         for (int i = 0; i < dataOfInput.size(); i++) {
             int t = dataOfInput.get(i).get(TIME);
             if (t >= timeFilter[0] && t <= timeFilter[1]) {
-                UDWTimeConstrained.add(dataOfInput.get(i));
+                dataTimeConstrained.add(dataOfInput.get(i));
             }
         }
 
-        getUDWIG(UDWTimeConstrained);
+        getUDWIG(dataTimeConstrained);
     }
 
 
@@ -198,14 +267,13 @@ public class UDWInteractionGraph {
 
         for (int i = 0; i < inputUDWIG.emailData.size(); i++) {
             List<Integer> eachData = inputUDWIG.emailData.get(i);
-            if ((userFilter.contains(eachData.get(USER_A)) &&
+            if ((userFilter.contains(eachData.get(USER_A)) ||
                 userFilter.contains(eachData.get(USER_B)))) {
                 data.add(eachData);
             }
         }
 
         getUDWIG(data);
-        users = inputUDWIG.users;
     }
 
     /**
@@ -214,7 +282,8 @@ public class UDWInteractionGraph {
      * @param inputDWIG a DWInteractionGraph object
      */
     public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
-        getUDWIG(inputDWIG.getDWI_data());
+        emailData = inputDWIG.getDWI_data();
+        getUDWIG(emailData);
     }
 
     /**
@@ -233,12 +302,18 @@ public class UDWInteractionGraph {
      * receiver in this DWInteractionGraph.
      */
     public int getEmailCount(int sender, int receiver) {
-        Set<Integer> user = new HashSet<>();
+        List<Integer> user = new ArrayList<>();
+        List<Integer> userComplement = new ArrayList<>();
+
         user.add(sender);
         user.add(receiver);
+        userComplement.add(receiver);
+        userComplement.add(sender);
 
         if (emailWeightMap.containsKey(user)) {
             return emailWeightMap.get(user);
+        } else if (emailWeightMap.containsKey(userComplement)) {
+            return emailWeightMap.get(userComplement);
         } else {
             return 0;
         }
@@ -253,8 +328,30 @@ public class UDWInteractionGraph {
      * [NumberOfUsers, NumberOfEmailTransactions]
      */
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
-        // TODO: Implement this method
-        return null;
+        List<List<Integer>> dataToPreserve = emailData;
+        List<List<Integer>> dataOfInput = emailData;
+        List<List<Integer>> dataTimeConstrained = new ArrayList<>();
+        int[] reportActivity = new int[2];
+        int totalTransaction = 0;
+        List<Integer> weightList = new ArrayList<>();
+
+        for (int i = 0; i < dataOfInput.size(); i++) {
+            int t = dataOfInput.get(i).get(TIME);
+            if (t >= timeWindow[0] && t <= timeWindow[1]) {
+                dataTimeConstrained.add(dataOfInput.get(i));
+            }
+        }
+        getUDWIG(dataTimeConstrained);
+        reportActivity[0] = getUsers().size();
+        emailWeightMap.forEach((a, b) -> weightList.add(b));
+        for (Integer integer : weightList) {
+            totalTransaction += integer;
+        }
+        reportActivity[1] = totalTransaction;
+
+        // get original UDWIG
+        getUDWIG(dataToPreserve);
+        return reportActivity;
     }
 
     /**
@@ -266,8 +363,22 @@ public class UDWInteractionGraph {
      * returns [0, 0].
      */
     public int[] ReportOnUser(int userID) {
-        // TODO: Implement this method
-        return null;
+        int[] reportOnUse = new int[2];
+        int numberOfEmails = 0;
+        int uniqueUserInteractedWith = 0;
+
+        for (List<Integer> emailDatum : emailData) {
+            if (emailDatum.get(USER_A) == userID) {
+                numberOfEmails++;
+                uniqueUserInteractedWith++;
+            } else if (emailDatum.get(USER_B) == userID) {
+                numberOfEmails++;
+            }
+        }
+
+        reportOnUse[0] = numberOfEmails;
+        reportOnUse[1] = uniqueUserInteractedWith;
+        return reportOnUse;
     }
 
     /**
@@ -275,9 +386,59 @@ public class UDWInteractionGraph {
      * @return the User ID for the Nth most active user
      */
     public int NthMostActiveUser(int N) {
-        // TODO: Implement this method
-        return -1;
+        List<List<Integer>> userList = new ArrayList<>(emailWeightMap.keySet());
+        int[] userTotalEmailList = new int[users.size()];
+        int[] eachUserList = new int[users.size()];
+        int nthEmailWeight = 0;
+        int smallestN = 0;
+
+        for (int i = 0; i < users.size(); i++) {
+            int userEmailTotal = 0;
+            for (int j = 0; j < userList.size(); j++) {
+                if (Objects.equals(userList.get(j).get(USER_A), users.get(i))) {
+                    List<Integer> userPair1 = new ArrayList<>();
+                    userPair1.add(users.get(i));
+                    userPair1.add(userList.get(j).get(USER_B));
+                    userEmailTotal += emailWeightMap.get(userPair1);
+                } else if (Objects.equals(userList.get(j).get(USER_B), users.get(i))) {
+                    List<Integer> userPair2 = new ArrayList<>();
+                    userPair2.add(userList.get(j).get(USER_A));
+                    userPair2.add(users.get(i));
+                    userEmailTotal += emailWeightMap.get(userPair2);
+                }
+            }
+            userTotalEmailList[i] = userEmailTotal;
+            eachUserList[i] = i;
+        }
+
+        for (int c = 0; c < users.size() - 1; c++) {
+            for (int k = 0; k < users.size() - c - 1; k++) {
+                if (userTotalEmailList[c] < userTotalEmailList[c + 1]) {
+                    int temp1 = userTotalEmailList[c];
+                    userTotalEmailList[c] = userTotalEmailList[c + 1];
+                    userTotalEmailList[c + 1] = temp1;
+
+                    int temp2 = eachUserList[c];
+                    eachUserList[c] = eachUserList[c + 1];
+                    eachUserList[c + 1] = temp2;
+                }
+            }
+        }
+        nthEmailWeight = userTotalEmailList[N - 1];
+        smallestN = eachUserList[N - 1];
+
+        for (int m = 0; m < users.size(); m++) {
+            if (userTotalEmailList[m] == nthEmailWeight && eachUserList[m] < smallestN) {
+                smallestN = eachUserList[m];
+            }
+        }
+
+        return smallestN;
     }
+
+
+
+
 
     /* ------- Task 3 ------- */
 
