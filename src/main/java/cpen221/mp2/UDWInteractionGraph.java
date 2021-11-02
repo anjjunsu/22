@@ -366,14 +366,25 @@ public class UDWInteractionGraph {
         int[] reportOnUse = new int[2];
         int numberOfEmails = 0;
         int uniqueUserInteractedWith = 0;
+        Set<List<Integer>> notUniqueInteractions = new HashSet<>();
 
         for (List<Integer> emailDatum : emailData) {
-            if (emailDatum.get(USER_A) == userID) {
+            List<Integer> notUniquePair = new ArrayList<>();
+            List<Integer> notUniquePairComplement = new ArrayList<>();
+            notUniquePair.add(emailDatum.get(USER_A));
+            notUniquePair.add(emailDatum.get(USER_B));
+            notUniquePairComplement.add(emailDatum.get(USER_B));
+            notUniquePairComplement.add(emailDatum.get(USER_A));
+
+            if (emailDatum.get(USER_A) == userID || emailDatum.get(USER_B) == userID) {
                 numberOfEmails++;
-                uniqueUserInteractedWith++;
-            } else if (emailDatum.get(USER_B) == userID) {
-                numberOfEmails++;
+                if (!notUniqueInteractions.contains(notUniquePair) &&
+                    !notUniqueInteractions.contains(notUniquePairComplement)) {
+                    uniqueUserInteractedWith++;
+                }
             }
+            notUniqueInteractions.add(notUniquePair);
+            notUniqueInteractions.add(notUniquePairComplement);
         }
 
         reportOnUse[0] = numberOfEmails;
