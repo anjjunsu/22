@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class DWInteractionGraph {
@@ -318,8 +317,51 @@ public class DWInteractionGraph {
      * tie, secondarily sorts the tied User IDs in ascending order.
      */
     public int NthMostActiveUser(int N, SendOrReceive interactionType) {
-        // TODO: Implement this method
-        return -1;
+        // made new class Element to tie index and value together
+        List<Element> sendRanking = new ArrayList<>();
+        List<Element> receiveRanking = new ArrayList<>();
+        Element wantedUser;
+        int wantedData = 0;
+
+        // return -1 when N is higher than number of unique users
+        if (N > userList.size()) { return -1; }
+
+//        for (Integer i : DWG.keySet()) {
+//            int numSend = 0;
+//            for (Edge e : DWG.get(i)) {
+//                numSend += e.getWeight();
+//            }
+//            sendRanking.add(new Element((int) i, numSend);
+//        }
+
+        for (Integer user : userList) {
+            int numSend = 0;
+            int numReceive = 0;
+            for (List dataList : emailDataWithWeight) {
+                if (dataList.get(USER_A) == user) {
+                    numSend += (int) dataList.get(WEIGHT);
+                }
+                if (dataList.get(USER_B) == user) {
+                    numReceive += (int) dataList.get(WEIGHT);
+                }
+            }
+            sendRanking.add(new Element((int) user, numSend));
+            receiveRanking.add(new Element((int) user, numReceive));
+        }
+
+        sendRanking.sort(new NumberComparator());
+        receiveRanking.sort(new NumberComparator());
+
+        if (interactionType == SendOrReceive.SEND) {
+            wantedUser = sendRanking.get(N - 1);
+            wantedData = wantedUser.getValue();
+        }
+
+        if (interactionType == SendOrReceive.RECEIVE) {
+            wantedUser = receiveRanking.get(N-1);
+            wantedData = wantedUser.getValue();
+        }
+        return wantedData;
     }
 
     /* ------- Task 3 ------- */
