@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -364,8 +366,6 @@ public class UDWInteractionGraph {
         int[] reportOnUse = new int[2];
         int numberOfEmails = 0;
         int uniqueUserInteractedWith = 0;
-        List<List<Integer>> userList = new ArrayList<>(emailWeightMap.keySet());
-        System.out.println(userList);
 
         for (List<Integer> emailDatum : emailData) {
             if (emailDatum.get(USER_A) == userID) {
@@ -386,8 +386,54 @@ public class UDWInteractionGraph {
      * @return the User ID for the Nth most active user
      */
     public int NthMostActiveUser(int N) {
-        // TODO: Implement this method
-        return -1;
+        List<List<Integer>> userList = new ArrayList<>(emailWeightMap.keySet());
+        int[] userTotalEmailList = new int[users.size()];
+        int[] eachUserList = new int[users.size()];
+        int nthEmailWeight = 0;
+        int smallestN = 0;
+
+        for (int i = 0; i < users.size(); i++) {
+            int userEmailTotal = 0;
+            for (int j = 0; j < userList.size(); j++) {
+                if (Objects.equals(userList.get(j).get(USER_A), users.get(i))) {
+                    List<Integer> userPair1 = new ArrayList<>();
+                    userPair1.add(users.get(i));
+                    userPair1.add(userList.get(j).get(USER_B));
+                    userEmailTotal += emailWeightMap.get(userPair1);
+                } else if (Objects.equals(userList.get(j).get(USER_B), users.get(i))) {
+                    List<Integer> userPair2 = new ArrayList<>();
+                    userPair2.add(userList.get(j).get(USER_A));
+                    userPair2.add(users.get(i));
+                    userEmailTotal += emailWeightMap.get(userPair2);
+                }
+            }
+            userTotalEmailList[i] = userEmailTotal;
+            eachUserList[i] = i;
+        }
+
+        for (int c = 0; c < users.size() - 1; c++) {
+            for (int k = 0; k < users.size() - c - 1; k++) {
+                if (userTotalEmailList[c] < userTotalEmailList[c + 1]) {
+                    int temp1 = userTotalEmailList[c];
+                    userTotalEmailList[c] = userTotalEmailList[c + 1];
+                    userTotalEmailList[c + 1] = temp1;
+
+                    int temp2 = eachUserList[c];
+                    eachUserList[c] = eachUserList[c + 1];
+                    eachUserList[c + 1] = temp2;
+                }
+            }
+        }
+        nthEmailWeight = userTotalEmailList[N - 1];
+        smallestN = eachUserList[N - 1];
+
+        for (int m = 0; m < users.size(); m++) {
+            if (userTotalEmailList[m] == nthEmailWeight && eachUserList[m] < smallestN) {
+                smallestN = eachUserList[m];
+            }
+        }
+
+        return smallestN;
     }
 
 
