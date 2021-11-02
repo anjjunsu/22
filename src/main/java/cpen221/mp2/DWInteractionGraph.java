@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DWInteractionGraph {
     private static final int USER_A = 0;
@@ -24,7 +24,7 @@ public class DWInteractionGraph {
     private HashMap<Integer, LinkedList<Edge>> DWG;
     private List<List<Integer>> emailData;
     private List<List<Integer>> emailDataWithWeight;
-    private Set<Integer> userSet = new HashSet<>(); // With no duplicate users
+    private Set<Integer> userSet; // With no duplicate users
     private List<Integer> userList; // Just convert userSet to userList b/c List is easier to work w/.
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
@@ -133,6 +133,11 @@ public class DWInteractionGraph {
         emailData = new ArrayList<>(userFilteredData);
         setEmailDataWithWeight(userFilteredData);
 
+        // remove
+        System.out.println("email data with weight after user filter: ");
+        for(List l : emailDataWithWeight) {
+            System.out.println(l);
+        }
         makeDWI();
 
         // Remove
@@ -141,7 +146,7 @@ public class DWInteractionGraph {
         printGraph();
     }
 
-    // For debugging purpose. Nothing special
+    // Remove. For debugging purpose. Nothing special
     private void printGraph() {
         for (Integer sender : DWG.keySet()) {
             System.out.println("-------------------------------------");
@@ -177,7 +182,7 @@ public class DWInteractionGraph {
     // Make a data [sender, receiver, weight]
     private void setEmailDataWithWeight(List<List<Integer>> data) {
         emailDataWithWeight = new ArrayList<>();
-
+        userSet = new HashSet<>();
         data.stream().forEach(x -> userSet.add(x.get(USER_A)));
         data.stream().forEach(x -> userSet.add(x.get(USER_B)));
 
@@ -283,28 +288,26 @@ public class DWInteractionGraph {
         int[] report = {0, 0, 0};
         int numSent = 0;
         int numReceive = 0;
-        int uniqueInteraction = 0;
-        Set<List<Integer>> temp = new HashSet<>();
+        int subtract = 0;
+        int uniqueInteraction = 0;      // Just count number of edges related to the user
+        Set<Integer> temp = new HashSet<>();
 
-        numSent = DWG.get((Integer) userID).size();
 
         for (Integer i : DWG.keySet()) {
             for (Edge e : DWG.get(i)) {
-                if (!(e.getReceiver() == userID && e.getSender() == userID)) {
-                    if (e.getSender() == userID) {
-                        uniqueInteraction++;
-                    }
-                    if (e.getReceiver() == userID){
-                        uniqueInteraction++;
-                    }
-                }
-
                 if (e.getReceiver() == userID) {
-                    numReceive++;
-
+                    numReceive += e.getWeight();
+                    temp.add( (Integer) e.getSender());
+                }
+                if (e.getSender() == userID) {
+                    numSent += e.getWeight();
+                    temp.add((Integer) e.getReceiver());
                 }
             }
         }
+
+        uniqueInteraction = temp.size();
+
         report[0] = numSent;
         report[1] = numReceive;
         report[2] = uniqueInteraction;
@@ -320,8 +323,46 @@ public class DWInteractionGraph {
      * tie, secondarily sorts the tied User IDs in ascending order.
      */
     public int NthMostActiveUser(int N, SendOrReceive interactionType) {
-        // TODO: Implement this method
-        return -1;
+        // made new class Element to tie index and value together
+        List<Element> sendRanking = new ArrayList<>();
+        List<Element> receiveRanking = new ArrayList<>();
+        Element wantedUser;
+        int validSendRank = 0;
+        int validReceiveRank = 0;
+        int wantedData = 0;
+
+        for (Integer user : userList) {
+            int numSend = 0;
+            int numReceive = 0;
+            for (List dataList : emailDataWithWeight) {
+                if (dataList.get(USER_A) == user) {
+                    numSend += (int) dataList.get(WEIGHT);
+                }
+                if (dataList.get(USER_B) == user) {
+                    numReceive += (int) dataList.get(WEIGHT);
+                }
+            }
+            sendRanking.add(new Element((int) user, numSend));
+            receiveRanking.add(new Element((int) user, numReceive));
+        }
+
+        sendRanking.sort(new NumberComparator());
+        receiveRanking.sort(new NumberComparator());
+
+        if (interactionType == SendOrReceive.SEND) {
+            validSendRank = sendRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList()).size();
+            if (N > validSendRank) { return -1; }
+            wantedUser = sendRanking.get(N - 1);
+            wantedData = wantedUser.getIndex();
+        }
+
+        if (interactionType == SendOrReceive.RECEIVE) {
+            validReceiveRank = receiveRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList()).size();
+            if (N > validReceiveRank) { return -1; }
+            wantedUser = receiveRanking.get(N-1);
+            wantedData = wantedUser.getIndex();
+        }
+        return wantedData;
     }
 
     /* ------- Task 3 ------- */
