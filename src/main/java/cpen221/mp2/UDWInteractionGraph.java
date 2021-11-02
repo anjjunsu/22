@@ -361,8 +361,24 @@ public class UDWInteractionGraph {
      * returns [0, 0].
      */
     public int[] ReportOnUser(int userID) {
-        // TODO: Implement this method
-        return null;
+        int[] reportOnUse = new int[2];
+        int numberOfEmails = 0;
+        int uniqueUserInteractedWith = 0;
+        List<List<Integer>> userList = new ArrayList<>(emailWeightMap.keySet());
+        System.out.println(userList);
+
+        for (List<Integer> emailDatum : emailData) {
+            if (emailDatum.get(USER_A) == userID) {
+                numberOfEmails++;
+                uniqueUserInteractedWith++;
+            } else if (emailDatum.get(USER_B) == userID) {
+                numberOfEmails++;
+            }
+        }
+
+        reportOnUse[0] = numberOfEmails;
+        reportOnUse[1] = uniqueUserInteractedWith;
+        return reportOnUse;
     }
 
     /**
