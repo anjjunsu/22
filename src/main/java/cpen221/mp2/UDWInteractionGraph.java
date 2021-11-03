@@ -113,14 +113,23 @@ public class UDWInteractionGraph {
         for (int i = 0; i < users.size(); i++) {
             Set<Integer> adjacencySet = new HashSet<>();
             int eachUser = users.get(i);
+            int sentItself = 0;
             for (int j = 0; j < userInteractions.size(); j++) {
                 if ((userInteractions.get(j).get(USER_A) == eachUser) ||
                     (userInteractions.get(j).get(USER_B) == eachUser)) {
                     adjacencySet.add(userInteractions.get(j).get(USER_A));
                     adjacencySet.add(userInteractions.get(j).get(USER_B));
+
+                    if (Objects.equals(userInteractions.get(j).get(USER_A),
+                        userInteractions.get(j).get(USER_B))) {
+                        sentItself = 1;
+                    }
                 }
             }
-            adjacencySet.remove(eachUser);
+            if(sentItself != 1) {
+                adjacencySet.remove(eachUser);
+            }
+            sentItself = 0;
             UDWIG.put(eachUser, adjacencySet.stream().toList());
         }
     }
@@ -448,9 +457,6 @@ public class UDWInteractionGraph {
     }
 
 
-
-
-
     /* ------- Task 3 ------- */
 
     /**
@@ -458,7 +464,17 @@ public class UDWInteractionGraph {
      * components in the UDWInteractionGraph object.
      */
     public int NumberOfComponents() {
-        // TODO: Implement this method
+        System.out.println(UDWIG);
+
+        for (int i = 0; i < users.size(); i++) {
+            Set<Integer> setDetermineJoint = new HashSet<>();
+            Map<Integer, List<Integer>> udwigWithoutItself = new HashMap<>(UDWIG);
+//            List<List<Integer>> interactionList = new ArrayList<>();
+            udwigWithoutItself.remove(users.get(i), UDWIG.get(users.get(i)));
+            System.out.println(udwigWithoutItself);
+
+        }
+
         return 0;
     }
 
