@@ -464,7 +464,6 @@ public class UDWInteractionGraph {
      * components in the UDWInteractionGraph object.
      */
     public int NumberOfComponents() {
-        System.out.println(UDWIG);
         Set<Set<Integer>> componentSet = new HashSet<>();
         Set<Integer> userSet = new HashSet<>();
 
@@ -484,7 +483,7 @@ public class UDWInteractionGraph {
 
     private void getNumberOfComponenets(int eachUser, Set<Integer> path) {
         for (int i = 0; i < UDWIG.get(eachUser).size(); i++) {
-            if(!path.contains(UDWIG.get(eachUser).get(i))) {
+            if (!path.contains(UDWIG.get(eachUser).get(i))) {
                 path.add(UDWIG.get(eachUser).get(i));
                 getNumberOfComponenets(UDWIG.get(eachUser).get(i), path);
             }
@@ -498,7 +497,27 @@ public class UDWInteractionGraph {
      * @return whether a path exists between the two users
      */
     public boolean PathExists(int userID1, int userID2) {
-        // TODO: Implement this method
+        Set<Set<Integer>> componentSet = new HashSet<>();
+        Set<Integer> userSet = new HashSet<>();
+        List<Set<Integer>> componentList = new ArrayList<>();
+
+        for (int i = 0; i < users.size(); i++) {
+            Set<Integer> path = new HashSet<>();
+            int eachUser = users.get(i);
+            if (!userSet.contains(eachUser)) {
+                path.add(eachUser);
+                getNumberOfComponenets(eachUser, path);
+                componentSet.add(path);
+            }
+            userSet.addAll(path.stream().toList());
+        }
+        componentList = componentSet.stream().toList();
+        for (int i = 0; i < componentList.size(); i++) {
+            if (componentList.get(i).contains(userID1) && componentList.get(i).contains(userID2)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
