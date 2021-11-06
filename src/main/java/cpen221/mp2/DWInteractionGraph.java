@@ -316,7 +316,6 @@ public class DWInteractionGraph {
         // made new class Element to tie index and value together
         List<Element> sendRanking = new ArrayList<>();
         List<Element> receiveRanking = new ArrayList<>();
-        Element wantedUser;
         int validSendRank = 0;
         int validReceiveRank = 0;
         int wantedData = 0;
@@ -342,15 +341,13 @@ public class DWInteractionGraph {
         if (interactionType == SendOrReceive.SEND) {
             validSendRank = sendRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList()).size();
             if (N > validSendRank) { return -1; }
-            wantedUser = sendRanking.get(N - 1);
-            wantedData = wantedUser.getIndex();
+            wantedData = sendRanking.get(N-1).getIndex();
         }
 
         if (interactionType == SendOrReceive.RECEIVE) {
             validReceiveRank = receiveRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList()).size();
             if (N > validReceiveRank) { return -1; }
-            wantedUser = receiveRanking.get(N-1);
-            wantedData = wantedUser.getIndex();
+            wantedData = receiveRanking.get(N-1).getIndex();
         }
         return wantedData;
     }
