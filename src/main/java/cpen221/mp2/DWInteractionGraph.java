@@ -388,7 +388,6 @@ public class DWInteractionGraph {
         Set<Integer> nodeVisited = new HashSet<>(node);
         List<Integer> path = new ArrayList<>(node);
 
-
         while (!q.isEmpty()) {
             List<Integer> nodeList = new ArrayList<>();
             node = q.poll();
@@ -405,8 +404,6 @@ public class DWInteractionGraph {
                 path.add(node);
             }
         }
-        System.out.println("Path: " + path);
-
         return path;
     }
 
