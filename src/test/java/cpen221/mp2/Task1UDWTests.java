@@ -16,8 +16,8 @@ public class Task1UDWTests {
     @BeforeAll
     public static void setupTests() {
         testGraphBase = new UDWInteractionGraph("resources/Task1-2UDWTransactions.txt");
-        testGraph1 = new UDWInteractionGraph(testGraphBase, new int[]{0, 9});
-        testGraph2 = new UDWInteractionGraph(testGraphBase, new int[]{10, 11});
+        testGraph1 = new UDWInteractionGraph(testGraphBase, new int[] {0, 9});
+        testGraph2 = new UDWInteractionGraph(testGraphBase, new int[] {10, 11});
     }
 
     @Test

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -38,19 +39,6 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(emailData);
 
         makeDWI();
-
-
-        // remove below
-        for(List l : emailData) {
-            System.out.println(l);
-        }
-        System.out.println("User Set"+ userSet);
-        System.out.println("User List is " + userList);
-        System.out.println("===Email data with weight===");
-        for (List<Integer> ll : emailDataWithWeight) {
-            System.out.println(ll);
-        }
-        printGraph();
     }
 
     // Make DWI graph
@@ -66,11 +54,9 @@ public class DWInteractionGraph {
                     int weight = (int) data.get(WEIGHT);
                     tempList.add(new Edge((int) sender, receiver, weight));
                 }
-
             }
             DWG.put(sender, tempList);
         }
-
     }
 
     /**
@@ -97,11 +83,6 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(timeFilteredData);
 
         makeDWI();
-
-        // Remove
-        System.out.println();
-        System.out.println("===Time Filtered DWI===");
-        printGraph();
     }
 
 
@@ -134,22 +115,8 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(userFilteredData);
 
         makeDWI();
-
-        // Remove
-        System.out.println();
-        System.out.println("===User Filtered DWI===");
-        printGraph();
     }
 
-    // For debugging purpose. Nothing special
-    private void printGraph() {
-        for (Integer sender : DWG.keySet()) {
-            System.out.println("-------------------------------------");
-            List<Edge> temp = new LinkedList<>();
-            temp = DWG.get(sender);
-            temp.stream().forEach(x -> x.printEdge());
-        }
-    }
     /**
      * @return a Set of Integers, where every element in the set is a User ID
      * in this DWInteractionGraph.
@@ -232,6 +199,7 @@ public class DWInteractionGraph {
 
     // defensive copying return
     protected List<List<Integer>> getDWI_data() {
+
         return new ArrayList<>(this.emailData);
     }
     /* ------- Task 2 ------- */
