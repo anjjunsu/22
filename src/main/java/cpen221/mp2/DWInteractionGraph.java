@@ -392,7 +392,6 @@ public class DWInteractionGraph {
             Integer current = stack.pop();
 
             if (!visited.get(current)) {
-                visited.
             }
         }
 
