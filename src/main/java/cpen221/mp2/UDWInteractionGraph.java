@@ -467,29 +467,10 @@ public class UDWInteractionGraph {
         Set<Set<Integer>> componentSet = new HashSet<>();
         Set<Integer> userSet = new HashSet<>();
 
-        for (int i = 0; i < users.size(); i++) {
-            Set<Integer> path = new HashSet<>();
-            int eachUser = users.get(i);
-            if (!userSet.contains(eachUser)) {
-                path.add(eachUser);
-                getNumberOfComponenets(eachUser, path);
-                componentSet.add(path);
-            }
-            userSet.addAll(path.stream().toList());
-        }
+        findComponents(componentSet, userSet);
 
         return componentSet.size();
     }
-
-    private void getNumberOfComponenets(int eachUser, Set<Integer> path) {
-        for (int i = 0; i < UDWIG.get(eachUser).size(); i++) {
-            if (!path.contains(UDWIG.get(eachUser).get(i))) {
-                path.add(UDWIG.get(eachUser).get(i));
-                getNumberOfComponenets(UDWIG.get(eachUser).get(i), path);
-            }
-        }
-    }
-
 
     /**
      * @param userID1 the user ID for the first user
@@ -501,6 +482,19 @@ public class UDWInteractionGraph {
         Set<Integer> userSet = new HashSet<>();
         List<Set<Integer>> componentList = new ArrayList<>();
 
+        findComponents(componentSet, userSet);
+
+        componentList = componentSet.stream().toList();
+        for (int i = 0; i < componentList.size(); i++) {
+            if (componentList.get(i).contains(userID1) && componentList.get(i).contains(userID2)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void findComponents(Set<Set<Integer>> componentSet, Set<Integer> userSet) {
         for (int i = 0; i < users.size(); i++) {
             Set<Integer> path = new HashSet<>();
             int eachUser = users.get(i);
@@ -511,14 +505,15 @@ public class UDWInteractionGraph {
             }
             userSet.addAll(path.stream().toList());
         }
-        componentList = componentSet.stream().toList();
-        for (int i = 0; i < componentList.size(); i++) {
-            if (componentList.get(i).contains(userID1) && componentList.get(i).contains(userID2)) {
-                return true;
+    }
+
+    private void getNumberOfComponenets(int eachUser, Set<Integer> path) {
+        for (int i = 0; i < UDWIG.get(eachUser).size(); i++) {
+            if (!path.contains(UDWIG.get(eachUser).get(i))) {
+                path.add(UDWIG.get(eachUser).get(i));
+                getNumberOfComponenets(UDWIG.get(eachUser).get(i), path);
             }
         }
-
-        return false;
     }
 
 }
