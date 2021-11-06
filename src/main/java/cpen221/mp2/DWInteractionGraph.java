@@ -1,5 +1,6 @@
 package cpen221.mp2;
 
+import java.awt.desktop.AboutHandler;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -378,8 +379,30 @@ public class DWInteractionGraph {
      * if no path exists, should return null.
      */
     public List<Integer> DFS(int userID1, int userID2) {
-        // TODO: Implement this method
+        Map<Integer, Boolean> visited = new HashMap<>();
+        Stack<Integer> stack = new Stack<>();
+
+        for (Integer user : userList) {
+            visited.put(user, false);
+        }
+
+        stack.push(userID1);
+
+        while(!stack.isEmpty()) {
+            Integer current = stack.pop();
+
+            if (!visited.get(current)) {
+                visited.
+            }
+        }
+
         return null;
+    }
+
+    private void recursiveDFS(Integer n, Map<Integer, Boolean> visited) {
+        for(Integer user : userList) {
+
+        }
     }
 
     /* ------- Task 4 ------- */

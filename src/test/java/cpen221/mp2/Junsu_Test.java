@@ -8,4 +8,8 @@ public class Junsu_Test {
     // What if all the users are filtered out?
 
     // In task2 time filter thing, what if time span is 0? like [11,11]
+
+    // In task 3 DFS, what if there is no path?
+
+    // Task3 DFS, what if there are too many cycles?
 }
