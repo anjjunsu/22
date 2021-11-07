@@ -456,31 +456,73 @@ public class DWInteractionGraph {
      * @return the maximum number of users that can be polluted in N hours
      */
     public int MaxBreachedUserCount(int hours) {
-        int seconds = hours * 3600;
-        Set<Set<Integer>> componentSet = new HashSet<>();
-        Set<Integer> userSet = new HashSet<>();
-        List<Set<Integer>> componentList;
-        int maxCount = 0;
+        int totalSeconds = hours * 3600;
+        int maximumInfected = 0;
+        List<Integer> timeList = new ArrayList<>();
 
-        findComponents(componentSet, userSet);
+        getDWI_data().forEach(x -> timeList.add(x.get(TIME)));
+        Collections.sort(timeList);
+
+        for (int i = 0; i < timeList.size() - 1; i++) {
+            int timeLimit = timeList.get(i) + totalSeconds;
+            int j = i + 1;
+            int count = 0;
+            List<Integer> possibleUsers = new ArrayList<>();
+
+            while (j < timeList.size() && timeList.get(j) <= timeLimit) {
+                j++;
+            }
+            j--;
+            int timeI = i;
+
+            System.out.println("I = " + timeList.get(i) + " J = " + timeList.get(j));
+
+            getTimefilteredDWG(timeList.get(i), timeList.get(j));
+            getDWI_data().forEach(x -> {
+                if (x.contains(timeList.get(timeI))) {
+                    possibleUsers.add(x.get(SENDER));
+                }
+            });
+            System.out.println("Possible user = " + possibleUsers);
+
+            for (Integer possibleUser : possibleUsers) {
+                count = getMaxCount(possibleUser);
+                if (count > maximumInfected) {
+                    maximumInfected = count;
+                }
+            }
+        }
+
+        // set DWG back to original
+        getTimefilteredDWG(timeList.get(0), timeList.get(timeList.size() - 1));
+
+        return maximumInfected;
+    }
+
+    private int getMaxCount(int startUser) {
+        int maxCount = 0;
+        Set<List<Integer>> componentSet = new HashSet<>();
+        Set<Integer> userSet = new HashSet<>();
+        List<List<Integer>> componentList;
+        findComponents(componentSet, userSet, startUser);
         componentList = componentSet.stream().toList();
 
-
-        for(int i = 0; i < componentList.size(); i++) {
-            if(componentList.get(i).size() > maxCount) {
+        for (int i = 0; i < componentList.size(); i++) {
+            if (componentList.get(i).size() > maxCount &&
+                startUser == componentList.get(i).get(0)) {
                 maxCount = componentList.get(i).size();
             }
         }
-        System.out.println("***: " + componentList);
-
-
+        System.out.println("*** " + startUser);
+        System.out.println(componentSet);
         return maxCount;
     }
 
 
-    private void findComponents(Set<Set<Integer>> componentSet, Set<Integer> user_set) {
+    private void findComponents(Set<List<Integer>> componentSet, Set<Integer> user_set,
+                                int startUser) {
         for (int i = 0; i < userList.size(); i++) {
-            Set<Integer> path = new HashSet<>();
+            List<Integer> path = new ArrayList<>(startUser);
             int eachUser = userList.get(i);
             if (!user_set.contains(eachUser)) {
                 path.add(eachUser);
@@ -491,7 +533,7 @@ public class DWInteractionGraph {
         }
     }
 
-    private void getNumberOfComponenets(int eachUser, Set<Integer> path) {
+    private void getNumberOfComponenets(int eachUser, List<Integer> path) {
         for (int i = 0; i < DWG.get(eachUser).size(); i++) {
             int user = DWG.get(eachUser).get(i).getReceiver();
 
@@ -500,5 +542,19 @@ public class DWInteractionGraph {
                 getNumberOfComponenets(user, path);
             }
         }
+    }
+
+    private void getTimefilteredDWG(int timeBegin, int timeEnd) {
+        List<List<Integer>> timeFilteredData = new ArrayList<>();
+        for (List l : getDWI_data()) {
+            if ((int) l.get(TIME) >= timeBegin && (int) l.get(TIME) <= timeEnd) {
+                timeFilteredData.add(l);
+            }
+        }
+
+        emailData = new ArrayList<>(timeFilteredData);
+        setEmailDataWithWeight(timeFilteredData);
+
+        makeDWI();
     }
 }
