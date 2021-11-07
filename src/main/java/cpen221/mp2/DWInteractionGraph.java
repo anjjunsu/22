@@ -1,6 +1,5 @@
 package cpen221.mp2;
 
-import java.awt.desktop.AboutHandler;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,15 +15,24 @@ public class DWInteractionGraph {
     private HashMap<Integer, LinkedList<Edge>> DWG;
     private List<List<Integer>> emailData;
     private List<List<Integer>> emailDataWithWeight;
-    private Set<Integer> userSet; // With no duplicate users
+    private Set<Integer> userSet;
     private List<Integer> userList;
-    // Just convert userSet to userList b/c List is easier to work w/.
+    /* Representation Invariant */
+    // TODO: Write RI
+
+    /* Abstraction Function */
+    //TODO: write AF
+
+
+    /*Safety from rep exposure:*/
+    // All fields are private
+    // Use defensive copying when returning a mutable object
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
-     * The email interaction file will be in the resources directory.
+     * The email interaction file will be in the resource directory.
      *
-     * @param fileName the name of the file in the resources
+     * @param fileName the name of the file in the resource
      *                 directory containing email interactions
      */
     public DWInteractionGraph(String fileName) {
@@ -78,10 +86,12 @@ public class DWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
+        int START_TIME_INDEX = 0;
+        int END_TIME_INDEX = 1;
         List<List<Integer>> dataOfInput = new ArrayList<>(inputDWIG.getDWI_data());
         List<List<Integer>> timeFilteredData = new ArrayList<>();
         for (List l : dataOfInput) {
-            if ((int) l.get(TIME) >= timeFilter[0] && (int) l.get(TIME) <= timeFilter[1]) {
+            if ((int) l.get(TIME) >= timeFilter[START_TIME_INDEX] && (int) l.get(TIME) <= timeFilter[END_TIME_INDEX]) {
                 timeFilteredData.add(l);
             }
         }
@@ -149,7 +159,7 @@ public class DWInteractionGraph {
     }
 
     /**
-     * @return a Set of Integers, where every element in the set is a User ID
+     * @return ID of every users in DWInteraction Graph, where every element in the set is a User ID
      * in this DWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
@@ -233,7 +243,6 @@ public class DWInteractionGraph {
     protected List<List<Integer>> getDWI_data() {
         return new ArrayList<>(this.emailData);
     }
-    /* ------- Task 2 ------- */
 
     /**
      * Given an int array, [t0, t1], reports email transaction details.
@@ -343,15 +352,14 @@ public class DWInteractionGraph {
 
         sendRanking =
             sendRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed())
-                .toList();
+                .collect(Collectors.toList());
         receiveRanking =
             receiveRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed())
-                .toList();
+                .collect(Collectors.toList());
 
         if (interactionType == SendOrReceive.SEND) {
             validSendRank =
-                sendRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList())
-                    .size();
+                (int) sendRanking.stream().filter(x -> x.getValue() > 0).count();
             if (N > validSendRank) {
                 return -1;
             }
@@ -360,8 +368,7 @@ public class DWInteractionGraph {
 
         if (interactionType == SendOrReceive.RECEIVE) {
             validReceiveRank =
-                receiveRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList())
-                    .size();
+                (int) receiveRanking.stream().filter(x -> x.getValue() > 0).count();
             if (N > validReceiveRank) {
                 return -1;
             }
@@ -369,8 +376,6 @@ public class DWInteractionGraph {
         }
         return wantedData;
     }
-
-    /* ------- Task 3 ------- */
 
     /**
      * performs breadth first search on the DWInteractionGraph object
@@ -425,34 +430,42 @@ public class DWInteractionGraph {
      */
     public List<Integer> DFS(int userID1, int userID2) {
         Set<Integer> isVisited = new LinkedHashSet<>();
+        boolean found = false;
 
         if (!(userList.contains(userID1) || userList.contains(userID2))) {
             return null;
         }
 
-        recursiveDFS(userID1, userID2, isVisited);
+        found = recursiveDFS(userID1, userID2, isVisited);
+
+        if (!found) {
+            return null;
+        }
 
         return new ArrayList<>(isVisited);
     }
 
-    private void recursiveDFS(Integer user, Integer targetUser, Set<Integer> isVisited) {
+    private boolean recursiveDFS(Integer user, Integer targetUser, Set<Integer> isVisited) {
+        boolean found = false;
         isVisited.add(user);
-
+        if (user == targetUser) {
+            found = true;
+        }
         for (Edge adjacent : DWG.get(user)) {
             if (!(isVisited.contains(adjacent.getReceiver())) &&
                 !(isVisited.contains(targetUser))) {
-                recursiveDFS(adjacent.getReceiver(), targetUser, isVisited);
+
+                found = recursiveDFS(adjacent.getReceiver(), targetUser, isVisited);
             }
+
         }
+        return found;
     }
 
-    /* ------- Task 4 ------- */
-
     /**
-     * Read the MP README file carefully to understand
-     * what is required from this method.
+     * Calculate the maximum number of users polluted by the malicious email in N hours
      *
-     * @param hours
+     * @param hours is delaying time of triggering fire wall after the first attack of a hacker
      * @return the maximum number of users that can be polluted in N hours
      */
     public int MaxBreachedUserCount(int hours) {
