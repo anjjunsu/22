@@ -15,15 +15,24 @@ public class DWInteractionGraph {
     private HashMap<Integer, LinkedList<Edge>> DWG;
     private List<List<Integer>> emailData;
     private List<List<Integer>> emailDataWithWeight;
-    private Set<Integer> userSet; // With no duplicate users
+    private Set<Integer> userSet;
     private List<Integer> userList;
-    // Just convert userSet to userList b/c List is easier to work w/.
+    /* Representation Invariant */
+    // TODO: Write RI
+
+    /* Abstraction Function */
+    //TODO: write AF
+
+
+    /*Safety from rep exposure:*/
+    // All fields are private
+    // Use defensive copying when returning a mutable object
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
-     * The email interaction file will be in the resources directory.
+     * The email interaction file will be in the resource directory.
      *
-     * @param fileName the name of the file in the resources
+     * @param fileName the name of the file in the resource
      *                 directory containing email interactions
      */
     public DWInteractionGraph(String fileName) {
@@ -77,10 +86,12 @@ public class DWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
+        int START_TIME = 0;
+        int END_TIME = 1;
         List<List<Integer>> dataOfInput = new ArrayList<>(inputDWIG.getDWI_data());
         List<List<Integer>> timeFilteredData = new ArrayList<>();
         for (List l : dataOfInput) {
-            if ((int) l.get(TIME) >= timeFilter[0] && (int) l.get(TIME) <= timeFilter[1]) {
+            if ((int) l.get(TIME) >= timeFilter[START_TIME] && (int) l.get(TIME) <= timeFilter[END_TIME]) {
                 timeFilteredData.add(l);
             }
         }
@@ -148,7 +159,7 @@ public class DWInteractionGraph {
     }
 
     /**
-     * @return a Set of Integers, where every element in the set is a User ID
+     * @return ID of every users in DWInteraction Graph, where every element in the set is a User ID
      * in this DWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
@@ -348,8 +359,7 @@ public class DWInteractionGraph {
 
         if (interactionType == SendOrReceive.SEND) {
             validSendRank =
-                sendRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList())
-                    .size();
+                (int) sendRanking.stream().filter(x -> x.getValue() > 0).count();
             if (N > validSendRank) {
                 return -1;
             }
@@ -358,8 +368,7 @@ public class DWInteractionGraph {
 
         if (interactionType == SendOrReceive.RECEIVE) {
             validReceiveRank =
-                receiveRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList())
-                    .size();
+                (int) receiveRanking.stream().filter(x -> x.getValue() > 0).count();
             if (N > validReceiveRank) {
                 return -1;
             }

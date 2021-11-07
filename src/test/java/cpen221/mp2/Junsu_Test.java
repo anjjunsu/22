@@ -12,17 +12,36 @@ import java.util.Set;
 public class Junsu_Test {
 
     private static DWInteractionGraph selfEmailing;
+    private static DWInteractionGraph noInteractionsAtAll;
     private static DWInteractionGraph weirdFormattedFile;
     private static DWInteractionGraph empty;
 
     @BeforeAll
     public static void setupTests() {
         selfEmailing = new DWInteractionGraph("resources/Junsu_Task3_emailToMyself.txt");
+        noInteractionsAtAll = new DWInteractionGraph("resources/noInteractionsAtAll.txt");
 //        weirdFormattedFile = new DWInteractionGraph("resources/weirdFormat.txt");
         empty = new DWInteractionGraph("resources/empty.txt");
     }
-    // get Email count. What if there's no weight between sender and receiver?
 
+   // Test cases where interactions do not exist at all
+    @Test
+    public void noInteraction() {
+        Assertions.assertEquals(0, selfEmailing.getEmailCount(0,1));
+        Assertions.assertEquals(0, noInteractionsAtAll.getEmailCount(0, 3));
+    }
+
+    @Test
+    public void DFS_noInteractions() {
+        Assertions.assertNull(noInteractionsAtAll.DFS(0, 4));
+        Assertions.assertNull(selfEmailing.DFS(0, 1));
+    }
+
+    @Test
+    public void BFS_noPathExist() {
+        Assertions.assertNull(noInteractionsAtAll.BFS(1, 3));
+        Assertions.assertNull(selfEmailing.BFS(0, 1));
+    }
     // Task1 what if
     // there are more than one spacing between number in raw data
     // there are spaces before first character?
@@ -32,7 +51,13 @@ public class Junsu_Test {
 //        Assertions.assertArrayEquals(new int[]{1, 2, 4}, weirdFormattedFile.ReportOnUser(2));
 //    }
 
-    // What if no interaction at all? will graph be made?
+    @Test
+    public void testEmptyGraph() {
+        int[] expected1 = {0, 0, 0};
+        Assertions.assertArrayEquals(expected1, empty.ReportOnUser(0));
+        Assertions.assertArrayEquals(expected1, empty.ReportActivityInTimeWindow(new int[]{0, 1000}));
+        Assertions.assertEquals(-1, empty.NthMostActiveUser(1, SendOrReceive.SEND));
+    }
 
     // What if all the users are filtered out?
 
@@ -49,8 +74,6 @@ public class Junsu_Test {
         Assertions.assertEquals(expected, selfEmailing.DFS(0, 0));
         List<Integer> expected1 = Arrays.asList(1);
         Assertions.assertEquals(expected1, selfEmailing.DFS(1, 1));
-        // No path between user 0 and 1
-        Assertions.assertNull(selfEmailing.DFS(0, 1));
     }
 
     @Test
@@ -61,4 +84,5 @@ public class Junsu_Test {
     // Task3 DFS, what if there are too many cycles?
 
     // Task 4, what if the input data are not ordered in increasing order?
+
 }
