@@ -24,6 +24,13 @@ public class Junsu_Test {
         empty = new DWInteractionGraph("resources/empty.txt");
     }
 
+    //Task2 [NthMostActive]: Test 0 activity user filtered out
+    @Test
+    public void isNoActivityUserFilteredOut() {
+        Assertions.assertEquals(-1, selfEmailing.NthMostActiveUser(4, SendOrReceive.SEND));
+        Assertions.assertEquals(3, selfEmailing.NthMostActiveUser(2, SendOrReceive.RECEIVE));
+    }
+
    // Test cases where interactions do not exist at all
     @Test
     public void noInteraction() {
