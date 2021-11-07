@@ -13,5 +13,7 @@ public class Junsu_Test {
 
     // In task 3 DFS, what if there is no path?
 
+    // In task 3 for both DW and UDW, what if input user id is not valid?
+
     // Task3 DFS, what if there are too many cycles?
 }
