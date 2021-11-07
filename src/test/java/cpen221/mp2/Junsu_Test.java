@@ -42,6 +42,15 @@ public class Junsu_Test {
         Assertions.assertNull(noInteractionsAtAll.BFS(1, 3));
         Assertions.assertNull(selfEmailing.BFS(0, 1));
     }
+
+    //Test if input user is not exist in DFS and BFS
+    @Test
+    public void noUserExists() {
+        Assertions.assertNull(noInteractionsAtAll.DFS(11, 55));
+        Assertions.assertNull(noInteractionsAtAll.BFS(23, 99));
+    }
+
+
     // Task1 what if
     // there are more than one spacing between number in raw data
     // there are spaces before first character?
