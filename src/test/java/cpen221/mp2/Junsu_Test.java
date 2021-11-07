@@ -1,6 +1,23 @@
 package cpen221.mp2;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class Junsu_Test {
+
+    private static DWInteractionGraph selfEmailing;
+
+
+    @BeforeAll
+    public static void setupTests() {
+        selfEmailing = new DWInteractionGraph("resources/Junsu_Task3_emailToMyself.txt");
+    }
     // get Email count. What if there's no weight between sender and receiver?
 
     // Task1 what if there are more than one spacing between number in raw data
@@ -15,5 +32,15 @@ public class Junsu_Test {
 
     // In task 3 for both DW and UDW, what if input user id is not valid?
 
+    // Task 3, what if user sent an email to user itself?
+    @Test
+    public void test1GetUserIDsBase() {
+//        List<Integer> expected = Arrays.asList(0);
+//        Assertions.assertEquals(expected, selfEmailing.DFS(0, 0));
+//        List<Integer> expected1 = Arrays.asList(1);
+//        Assertions.assertEquals(expected1, selfEmailing.DFS(1, 1));
+        // No path between user 0 and 1
+        Assertions.assertNull(selfEmailing.DFS(0, 1));
+    }
     // Task3 DFS, what if there are too many cycles?
 }
