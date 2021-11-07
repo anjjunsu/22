@@ -521,9 +521,19 @@ public class DWInteractionGraph {
 
     private void findComponents(Set<List<Integer>> componentSet, Set<Integer> user_set,
                                 int startUser) {
+
+        // start with startUser
+
         for (int i = 0; i < userList.size(); i++) {
-            List<Integer> path = new ArrayList<>(startUser);
-            int eachUser = userList.get(i);
+            List<Integer> path = new ArrayList<>();
+            int eachUser;
+            if (i == 0) {
+                eachUser = startUser;
+            } else if (i == userList.indexOf(startUser)) {
+                eachUser = userList.get(0);
+            } else {
+                eachUser = userList.get(i);
+            }
             if (!user_set.contains(eachUser)) {
                 path.add(eachUser);
                 getNumberOfComponenets(eachUser, path);
