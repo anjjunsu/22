@@ -379,28 +379,30 @@ public class DWInteractionGraph {
      * if no path exists, should return null.
      */
     public List<Integer> DFS(int userID1, int userID2) {
-        Map<Integer, Boolean> visited = new HashMap<>();
-        Stack<Integer> stack = new Stack<>();
+        Set<Integer> isVisited = new LinkedHashSet<>();
 
-        for (Integer user : userList) {
-            visited.put(user, false);
+        if (!(userList.contains(userID1) || userList.contains(userID2))) {
+            return null;
         }
 
-        stack.push(userID1);
+        recursiveDFS(userID1, userID2, isVisited);
 
-        while(!stack.isEmpty()) {
-            Integer current = stack.pop();
-
-            if (!visited.get(current)) {
-            }
-        }
-
-        return null;
+        return new ArrayList<>(isVisited);
     }
 
-    private void recursiveDFS(Integer n, Map<Integer, Boolean> visited) {
-        for(Integer user : userList) {
+    private void recursiveDFS(Integer user, Integer targetUser, Set<Integer> isVisited) {
+        isVisited.add(user);
 
+        if (user == targetUser) {
+            return;
+        }
+
+        for (Edge adjacent : DWG.get(user)) {
+
+            if (!(isVisited.contains(adjacent.getReceiver())) && !(isVisited.contains(targetUser))) {
+
+                recursiveDFS(adjacent.getReceiver(), targetUser, isVisited);
+            }
         }
     }
 
