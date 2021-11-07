@@ -489,6 +489,10 @@ public class DWInteractionGraph {
                 count = getMaxCount(possibleUser);
                 if (count > maximumInfected) {
                     maximumInfected = count;
+                    if (count == 12) {
+                        System.out.println(
+                            "************ : I , J = " + timeList.get(i) + " " + timeList.get(j));
+                    }
                 }
             }
         }
@@ -521,9 +525,6 @@ public class DWInteractionGraph {
 
     private void findComponents(Set<List<Integer>> componentSet, Set<Integer> user_set,
                                 int startUser) {
-
-        // start with startUser
-
         for (int i = 0; i < userList.size(); i++) {
             List<Integer> path = new ArrayList<>();
             int eachUser;
