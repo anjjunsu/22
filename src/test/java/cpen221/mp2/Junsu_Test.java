@@ -12,16 +12,32 @@ import java.util.Set;
 public class Junsu_Test {
 
     private static DWInteractionGraph selfEmailing;
+    private static DWInteractionGraph noInteractionsAtAll;
     private static DWInteractionGraph weirdFormattedFile;
     private static DWInteractionGraph empty;
 
     @BeforeAll
     public static void setupTests() {
         selfEmailing = new DWInteractionGraph("resources/Junsu_Task3_emailToMyself.txt");
+        noInteractionsAtAll = new DWInteractionGraph("resources/noInteractionsAtAll.txt");
 //        weirdFormattedFile = new DWInteractionGraph("resources/weirdFormat.txt");
         empty = new DWInteractionGraph("resources/empty.txt");
     }
+
     // get Email count. What if there's no weight between sender and receiver?
+    // What if no interaction at all? will graph be made?
+    @Test
+    public void noInteraction() {
+        Assertions.assertEquals(0, selfEmailing.getEmailCount(0,1));
+        Assertions.assertEquals(0, noInteractionsAtAll.getEmailCount(0, 3));
+
+        Assertions.assertNull(noInteractionsAtAll.DFS(0, 4));
+        Assertions.assertNull(noInteractionsAtAll.BFS(1, 3));
+
+        Assertions.assertNull(selfEmailing.DFS(0, 1));
+        Assertions.assertNull(selfEmailing.BFS(0, 1));
+
+    }
 
     // Task1 what if
     // there are more than one spacing between number in raw data
@@ -32,7 +48,6 @@ public class Junsu_Test {
 //        Assertions.assertArrayEquals(new int[]{1, 2, 4}, weirdFormattedFile.ReportOnUser(2));
 //    }
 
-    // What if no interaction at all? will graph be made?
 
     // What if all the users are filtered out?
 

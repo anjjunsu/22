@@ -15,15 +15,24 @@ public class DWInteractionGraph {
     private HashMap<Integer, LinkedList<Edge>> DWG;
     private List<List<Integer>> emailData;
     private List<List<Integer>> emailDataWithWeight;
-    private Set<Integer> userSet; // With no duplicate users
+    private Set<Integer> userSet;
     private List<Integer> userList;
-    // Just convert userSet to userList b/c List is easier to work w/.
+    /* Representation Invariant */
+    // TODO: Write RI
+
+    /* Abstraction Function */
+    //TODO: write AF
+
+
+    /*Safety from rep exposure:*/
+    // All fields are private
+    // Use defensive copying when returning mutable object
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
-     * The email interaction file will be in the resources directory.
+     * The email interaction file will be in the resource directory.
      *
-     * @param fileName the name of the file in the resources
+     * @param fileName the name of the file in the resource
      *                 directory containing email interactions
      */
     public DWInteractionGraph(String fileName) {
