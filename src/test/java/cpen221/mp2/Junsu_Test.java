@@ -30,15 +30,19 @@ public class Junsu_Test {
     public void noInteraction() {
         Assertions.assertEquals(0, selfEmailing.getEmailCount(0,1));
         Assertions.assertEquals(0, noInteractionsAtAll.getEmailCount(0, 3));
-
-        Assertions.assertNull(noInteractionsAtAll.DFS(0, 4));
-        Assertions.assertNull(noInteractionsAtAll.BFS(1, 3));
-
-        Assertions.assertNull(selfEmailing.DFS(0, 1));
-        Assertions.assertNull(selfEmailing.BFS(0, 1));
-
     }
 
+    @Test
+    public void DFS_noInteractions() {
+        Assertions.assertNull(noInteractionsAtAll.DFS(0, 4));
+        Assertions.assertNull(selfEmailing.DFS(0, 1));
+    }
+
+    @Test
+    public void BFS_noPathExist() {
+        Assertions.assertNull(noInteractionsAtAll.BFS(1, 3));
+        Assertions.assertNull(selfEmailing.BFS(0, 1));
+    }
     // Task1 what if
     // there are more than one spacing between number in raw data
     // there are spaces before first character?
