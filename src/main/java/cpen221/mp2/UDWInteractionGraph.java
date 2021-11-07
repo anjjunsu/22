@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class UDWInteractionGraph {
     private static final int USER_A = 0;
@@ -56,10 +57,10 @@ public class UDWInteractionGraph {
         emailWeightMap = getEmailWeightMap(data);
         // get userInteractions
         userInteractions = new ArrayList<>();
-        emailWeightMap.keySet().forEach(x -> userInteractions.add(x.stream().toList()));
+        emailWeightMap.keySet().forEach(x -> userInteractions.add(new ArrayList<>(x)));
         Set<Integer> userSet = new HashSet<>();
         userInteractions.forEach(userSet::addAll);
-        users = userSet.stream().toList();
+        users = new ArrayList<>(userSet);
         getRelations();
     }
 
@@ -130,7 +131,7 @@ public class UDWInteractionGraph {
                 adjacencySet.remove(eachUser);
             }
             sentItself = 0;
-            UDWIG.put(eachUser, adjacencySet.stream().toList());
+            UDWIG.put(eachUser, new ArrayList<>(adjacencySet));
         }
     }
 
@@ -484,7 +485,7 @@ public class UDWInteractionGraph {
 
         findComponents(componentSet, userSet);
 
-        componentList = componentSet.stream().toList();
+        componentList = new ArrayList<>(componentSet);
         for (int i = 0; i < componentList.size(); i++) {
             if (componentList.get(i).contains(userID1) && componentList.get(i).contains(userID2)) {
                 return true;
@@ -503,7 +504,7 @@ public class UDWInteractionGraph {
                 getNumberOfComponenets(eachUser, path);
                 componentSet.add(path);
             }
-            userSet.addAll(path.stream().toList());
+            userSet.addAll(new ArrayList<>(path));
         }
     }
 
