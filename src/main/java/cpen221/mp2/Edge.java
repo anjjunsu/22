@@ -8,13 +8,22 @@ class Edge {
     // sender is non-negative integer
     // receiver is non-negative integer
     // weight is non-negative integer
+    // None of sender, receiver, or weight is null, or unspecified
 
     /* Abstraction Function */
     // Represents the relationship between email interaction
     // User ID of email sender, User ID of email receiver, number of email sent from sender to receiver
+    // Sender and Receiver can be same
 
     /*Safety from rep exposure:*/
     // All fields are private and immutable data type
+
+    /**
+     * Construct a new Edge
+     * @param sender user ID of sender
+     * @param receiver user ID of receiver
+     * @param weight number of emails sent for the sender
+     */
     Edge(int sender, int receiver, int weight) {
         this.sender = sender;
         this.receiver = receiver;
