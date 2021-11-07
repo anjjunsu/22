@@ -438,14 +438,8 @@ public class DWInteractionGraph {
     private void recursiveDFS(Integer user, Integer targetUser, Set<Integer> isVisited) {
         isVisited.add(user);
 
-        if (user == targetUser) {
-            return;
-        }
-
         for (Edge adjacent : DWG.get(user)) {
-
             if (!(isVisited.contains(adjacent.getReceiver())) && !(isVisited.contains(targetUser))) {
-
                 recursiveDFS(adjacent.getReceiver(), targetUser, isVisited);
             }
         }
