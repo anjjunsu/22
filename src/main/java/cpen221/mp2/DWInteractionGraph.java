@@ -391,17 +391,20 @@ public class DWInteractionGraph {
         while (!q.isEmpty()) {
             List<Integer> nodeList = new ArrayList<>();
             node = q.poll();
-
-            DWG.get(node).forEach(x -> nodeList.add(x.getReceiver()));
-            nodeList.forEach(x -> {
-                if (!nodeVisited.contains(x)) {
-                    q.add(x);
-                    nodeVisited.add(x);
-                }
-            });
-
-            if(!path.contains(node)) {
+            if (node == userID2) {
                 path.add(node);
+                return path;
+            } else {
+                DWG.get(node).forEach(x -> nodeList.add(x.getReceiver()));
+                nodeList.forEach(x -> {
+                    if (!nodeVisited.contains(x)) {
+                        q.add(x);
+                        nodeVisited.add(x);
+                    }
+                });
+                if (!path.contains(node)) {
+                    path.add(node);
+                }
             }
         }
         return path;
@@ -432,8 +435,17 @@ public class DWInteractionGraph {
      * @return the maximum number of users that can be polluted in N hours
      */
     public int MaxBreachedUserCount(int hours) {
-        // TODO: Implement this method
+        int seconds = hours * 3600;
+
+
         return 0;
     }
+
+//    private List<Integer> findLongestPath() {
+//        List<Integer> longestPath = new ArrayList<>();
+//
+//
+//        return
+//    }
 
 }
