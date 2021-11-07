@@ -15,6 +15,8 @@ public class Junsu_Test {
     private static DWInteractionGraph noInteractionsAtAll;
     private static DWInteractionGraph weirdFormattedFile;
     private static DWInteractionGraph empty;
+    private static UDWInteractionGraph udwudw;
+
 
     @BeforeAll
     public static void setupTests() {
@@ -22,6 +24,7 @@ public class Junsu_Test {
         noInteractionsAtAll = new DWInteractionGraph("resources/noInteractionsAtAll.txt");
 //        weirdFormattedFile = new DWInteractionGraph("resources/weirdFormat.txt");
         empty = new DWInteractionGraph("resources/empty.txt");
+        udwudw = new UDWInteractionGraph("resources/Junsu_UDW_Test.txt");
     }
 
     //Task2 [NthMostActive]: Test 0 activity user filtered out
@@ -101,4 +104,16 @@ public class Junsu_Test {
 
     // Task 4, what if the input data are not ordered in increasing order?
 
+    //=========================UDW TESTS==================================//
+    @Test
+    public void testUDW_NthMostActive() {
+        Assertions.assertEquals(0, udwudw.NthMostActiveUser(1));
+        Assertions.assertEquals(3, udwudw.NthMostActiveUser(2));
+        Assertions.assertEquals(1, udwudw.NthMostActiveUser(3));
+        Assertions.assertEquals(2, udwudw.NthMostActiveUser(4));
+        Assertions.assertEquals(10, udwudw.NthMostActiveUser(5));
+        Assertions.assertEquals(4, udwudw.NthMostActiveUser(6));
+        Assertions.assertEquals(6, udwudw.NthMostActiveUser(7));
+        Assertions.assertEquals(-1, udwudw.NthMostActiveUser(8));
+    }
 }
