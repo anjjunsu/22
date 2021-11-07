@@ -86,12 +86,12 @@ public class DWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
-        int START_TIME = 0;
-        int END_TIME = 1;
+        int START_TIME_INDEX = 0;
+        int END_TIME_INDEX = 1;
         List<List<Integer>> dataOfInput = new ArrayList<>(inputDWIG.getDWI_data());
         List<List<Integer>> timeFilteredData = new ArrayList<>();
         for (List l : dataOfInput) {
-            if ((int) l.get(TIME) >= timeFilter[START_TIME] && (int) l.get(TIME) <= timeFilter[END_TIME]) {
+            if ((int) l.get(TIME) >= timeFilter[START_TIME_INDEX] && (int) l.get(TIME) <= timeFilter[END_TIME_INDEX]) {
                 timeFilteredData.add(l);
             }
         }
