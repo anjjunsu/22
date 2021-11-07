@@ -17,7 +17,9 @@ public class DWInteractionGraph {
     private List<List<Integer>> emailData;
     private List<List<Integer>> emailDataWithWeight;
     private Set<Integer> userSet; // With no duplicate users
-    private List<Integer> userList; // Just convert userSet to userList b/c List is easier to work w/.
+    private List<Integer> userList;
+    // Just convert userSet to userList b/c List is easier to work w/.
+
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
      * The email interaction file will be in the resources directory.
@@ -32,10 +34,10 @@ public class DWInteractionGraph {
         makeDWI();
 
         // remove below
-        for(List l : emailData) {
+        for (List l : emailData) {
             System.out.println(l);
         }
-        System.out.println("User Set"+ userSet);
+        System.out.println("User Set" + userSet);
         System.out.println("User List is " + userList);
         System.out.println("===Email data with weight===");
         for (List<Integer> ll : emailDataWithWeight) {
@@ -45,7 +47,7 @@ public class DWInteractionGraph {
     }
 
     // Make DWI graph
-    private void makeDWI () {
+    private void makeDWI() {
         DWG = new HashMap<Integer, LinkedList<Edge>>();
 
         for (Integer sender : userList) {
@@ -68,7 +70,7 @@ public class DWInteractionGraph {
      * Creates a new DWInteractionGraph from a DWInteractionGraph object
      * and considering a time window filter.
      *
-     * @param inputDWIG a DWInteractionGraph object
+     * @param inputDWIG  a DWInteractionGraph object
      * @param timeFilter an integer array of length 2: [t0, t1]
      *                   where t0 <= t1. The created DWInteractionGraph
      *                   should only include those emails in the input
@@ -96,12 +98,11 @@ public class DWInteractionGraph {
     }
 
 
-
     /**
      * Creates a new DWInteractionGraph from a DWInteractionGraph object
      * and considering a list of User IDs.
      *
-     * @param inputDWIG a DWInteractionGraph object
+     * @param inputDWIG  a DWInteractionGraph object
      * @param userFilter a List of User IDs. The created DWInteractionGraph
      *                   should exclude those emails in the input
      *                   DWInteractionGraph for which neither the sender
@@ -126,7 +127,7 @@ public class DWInteractionGraph {
 
         // remove
         System.out.println("email data with weight after user filter: ");
-        for(List l : emailDataWithWeight) {
+        for (List l : emailDataWithWeight) {
             System.out.println(l);
         }
         makeDWI();
@@ -146,6 +147,7 @@ public class DWInteractionGraph {
             temp.stream().forEach(x -> x.printEdge());
         }
     }
+
     /**
      * @return a Set of Integers, where every element in the set is a User ID
      * in this DWInteractionGraph.
@@ -155,7 +157,7 @@ public class DWInteractionGraph {
     }
 
     /**
-     * @param sender the User ID of the sender in the email transaction.
+     * @param sender   the User ID of the sender in the email transaction.
      * @param receiver the User ID of the receiver in the email transaction.
      * @return the number of emails sent from the specified sender to the specified
      * receiver in this DWInteractionGraph.
@@ -198,13 +200,14 @@ public class DWInteractionGraph {
             }
         }
     }
+
     private List<List<Integer>> processData(String fileName) {
         List<List<Integer>> dataInteger = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             for (String fileLine = reader.readLine();
-                fileLine != null;
-                fileLine = reader.readLine()) {
+                 fileLine != null;
+                 fileLine = reader.readLine()) {
                 dataInteger.add(stringToInteger(fileLine));
 
             }
@@ -236,6 +239,7 @@ public class DWInteractionGraph {
      * Given an int array, [t0, t1], reports email transaction details.
      * Suppose an email in this graph is sent at time t, then all emails
      * sent where t0 <= t <= t1 are included in this report.
+     *
      * @param timeWindow is an int array of size 2 [t0, t1] where t0<=t1.
      * @return an int array of length 3, with the following structure:
      * [NumberOfSenders, NumberOfReceivers, NumberOfEmailTransactions]
@@ -268,6 +272,7 @@ public class DWInteractionGraph {
 
     /**
      * Given a User ID, reports the specified User's email transaction history.
+     *
      * @param userID the User ID of the user for which the report will be
      *               created.
      * @return an int array of length 3 with the following structure:
@@ -288,7 +293,7 @@ public class DWInteractionGraph {
             for (Edge e : DWG.get(i)) {
                 if (e.getReceiver() == userID) {
                     numReceive += e.getWeight();
-                    temp.add( (Integer) e.getSender());
+                    temp.add((Integer) e.getSender());
                 }
                 if (e.getSender() == userID) {
                     numSent += e.getWeight();
@@ -306,7 +311,7 @@ public class DWInteractionGraph {
     }
 
     /**
-     * @param N a positive number representing rank. N=1 means the most active.
+     * @param N               a positive number representing rank. N=1 means the most active.
      * @param interactionType Represent the type of interaction to calculate the rank for
      *                        Can be SendOrReceive.Send or SendOrReceive.RECEIVE
      * @return the User ID for the Nth most active user in specified interaction type.
@@ -336,19 +341,31 @@ public class DWInteractionGraph {
             receiveRanking.add(new Element((int) user, numReceive));
         }
 
-        sendRanking = sendRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed()).toList();
-        receiveRanking = receiveRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed()).toList();
+        sendRanking =
+            sendRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed())
+                .toList();
+        receiveRanking =
+            receiveRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed())
+                .toList();
 
         if (interactionType == SendOrReceive.SEND) {
-            validSendRank = sendRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList()).size();
-            if (N > validSendRank) { return -1; }
-            wantedData = sendRanking.get(N-1).getIndex();
+            validSendRank =
+                sendRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList())
+                    .size();
+            if (N > validSendRank) {
+                return -1;
+            }
+            wantedData = sendRanking.get(N - 1).getIndex();
         }
 
         if (interactionType == SendOrReceive.RECEIVE) {
-            validReceiveRank = receiveRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList()).size();
-            if (N > validReceiveRank) { return -1; }
-            wantedData = receiveRanking.get(N-1).getIndex();
+            validReceiveRank =
+                receiveRanking.stream().filter(x -> x.getValue() > 0).collect(Collectors.toList())
+                    .size();
+            if (N > validReceiveRank) {
+                return -1;
+            }
+            wantedData = receiveRanking.get(N - 1).getIndex();
         }
         return wantedData;
     }
@@ -358,6 +375,7 @@ public class DWInteractionGraph {
     /**
      * performs breadth first search on the DWInteractionGraph object
      * to check path between user with userID1 and user with userID2.
+     *
      * @param userID1 the user ID for the first user
      * @param userID2 the user ID for the second user
      * @return if a path exists, returns aa list of user IDs
@@ -365,13 +383,40 @@ public class DWInteractionGraph {
      * if no path exists, should return null.
      */
     public List<Integer> BFS(int userID1, int userID2) {
-        // TODO: Implement this method
-        return null;
+        Queue<Integer> q = new LinkedList<>();
+        q.add(userID1);
+        int node = userID1;
+        Set<Integer> nodeVisited = new HashSet<>(node);
+        List<Integer> path = new ArrayList<>(node);
+        List<Integer> noPath = new ArrayList<>();
+
+        while (!q.isEmpty()) {
+            List<Integer> nodeList = new ArrayList<>();
+            node = q.poll();
+            if (node == userID2) {
+                path.add(node);
+                return path;
+            } else {
+                DWG.get(node).forEach(x -> nodeList.add(x.getReceiver()));
+                nodeList.forEach(x -> {
+                    if (!nodeVisited.contains(x)) {
+                        q.add(x);
+                        nodeVisited.add(x);
+                    }
+                });
+                if (!path.contains(node)) {
+                    path.add(node);
+                }
+            }
+        }
+
+        return noPath;
     }
 
     /**
      * performs depth first search on the DWInteractionGraph object
      * to check path between user with userID1 and user with userID2.
+     *
      * @param userID1 the user ID for the first user
      * @param userID2 the user ID for the second user
      * @return if a path exists, returns aa list of user IDs
@@ -409,12 +454,22 @@ public class DWInteractionGraph {
     /**
      * Read the MP README file carefully to understand
      * what is required from this method.
+     *
      * @param hours
      * @return the maximum number of users that can be polluted in N hours
      */
     public int MaxBreachedUserCount(int hours) {
-        // TODO: Implement this method
+        int seconds = hours * 3600;
+
+
         return 0;
     }
+
+//    private List<Integer> findLongestPath() {
+//        List<Integer> longestPath = new ArrayList<>();
+//
+//
+//        return
+//    }
 
 }
