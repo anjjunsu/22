@@ -63,6 +63,10 @@ public class Task2DWAdditionalTests {
     public void testNthMostActiveUser1() {
         Assertions.assertEquals(3, testGraph.NthMostActiveUser(2, SendOrReceive.SEND));
         Assertions.assertEquals(13, testGraph.NthMostActiveUser(2, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(7, testGraph.NthMostActiveUser(3, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(10, testGraph.NthMostActiveUser(4, SendOrReceive.RECEIVE));
+
+
     }
 
     @Test
