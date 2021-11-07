@@ -439,7 +439,8 @@ public class DWInteractionGraph {
         isVisited.add(user);
 
         for (Edge adjacent : DWG.get(user)) {
-            if (!(isVisited.contains(adjacent.getReceiver())) && !(isVisited.contains(targetUser))) {
+            if (!(isVisited.contains(adjacent.getReceiver())) &&
+                !(isVisited.contains(targetUser))) {
                 recursiveDFS(adjacent.getReceiver(), targetUser, isVisited);
             }
         }
@@ -456,16 +457,48 @@ public class DWInteractionGraph {
      */
     public int MaxBreachedUserCount(int hours) {
         int seconds = hours * 3600;
+        Set<Set<Integer>> componentSet = new HashSet<>();
+        Set<Integer> userSet = new HashSet<>();
+        List<Set<Integer>> componentList;
+        int maxCount = 0;
+
+        findComponents(componentSet, userSet);
+        componentList = componentSet.stream().toList();
 
 
-        return 0;
+        for(int i = 0; i < componentList.size(); i++) {
+            if(componentList.get(i).size() > maxCount) {
+                maxCount = componentList.get(i).size();
+            }
+        }
+        System.out.println("***: " + componentList);
+
+
+        return maxCount;
     }
 
-//    private List<Integer> findLongestPath() {
-//        List<Integer> longestPath = new ArrayList<>();
-//
-//
-//        return
-//    }
 
+    private void findComponents(Set<Set<Integer>> componentSet, Set<Integer> user_set) {
+        for (int i = 0; i < userList.size(); i++) {
+            Set<Integer> path = new HashSet<>();
+            int eachUser = userList.get(i);
+            if (!user_set.contains(eachUser)) {
+                path.add(eachUser);
+                getNumberOfComponenets(eachUser, path);
+                componentSet.add(path);
+            }
+            user_set.addAll(path.stream().toList());
+        }
+    }
+
+    private void getNumberOfComponenets(int eachUser, Set<Integer> path) {
+        for (int i = 0; i < DWG.get(eachUser).size(); i++) {
+            int user = DWG.get(eachUser).get(i).getReceiver();
+
+            if (!path.contains(user)) {
+                path.add(DWG.get(eachUser).get(i).getReceiver());
+                getNumberOfComponenets(user, path);
+            }
+        }
+    }
 }
