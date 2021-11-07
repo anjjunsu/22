@@ -29,8 +29,6 @@ public class Junsu_Test {
     public void isNoActivityUserFilteredOut() {
         Assertions.assertEquals(-1, selfEmailing.NthMostActiveUser(4, SendOrReceive.SEND));
         Assertions.assertEquals(3, selfEmailing.NthMostActiveUser(2, SendOrReceive.RECEIVE));
-
-
     }
 
    // Test cases where interactions do not exist at all
