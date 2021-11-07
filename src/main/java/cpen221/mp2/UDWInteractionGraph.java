@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,14 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class UDWInteractionGraph {
     private static final int USER_A = 0;
     private static final int USER_B = 1;
     private static final int TIME = 2;
-
 
     // make a graph: superclass of UDWInteractionGraph
 
@@ -34,8 +30,23 @@ public class UDWInteractionGraph {
     private List<List<Integer>> userInteractions = new LinkedList<>();
     private Map<Integer, List<Integer>> UDWIG = new HashMap<>();
 
+    /* Representation Invariant */
+    // emailWeightMap, emailData, users, userInteractions, UDWIG are all not null, and do not
+    // contain null. They contain non-negative integer.
+
+    /* Abstraction Function */
+    // emailWeightMap represents number of email interactions between other users of each user.
+    // emailData represents data of emails that keep track of when an email was sent from one user
+    //           to the other user.
+    // "users" represents all users that have been involved in email transactions.
+    // userInteractions represents which users were involved in the email transactions for
+    //                  each user.
+    // UDWIG represents all email transactions between all users by a map.
+
     /**
-     * Creates a new UDWInteractionGraph using an email interaction file.
+     * Creates a new UDWInteractionGraph using an email interaction file. When email interaction
+     * file is passed, get the email data and then call getUDWIG method since working with
+     * email data is very convenient to modify UDWIG.
      * The email interaction file will be in the resources directory.
      *
      * @param fileName the name of the file in the resources
@@ -48,7 +59,7 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * create a new UDWInteractionGraph using Data
+     * create a new UDWInteractionGraph using Data. Set all properties of UDWInteractionGraph.
      *
      * @param data is not Null
      */
@@ -65,9 +76,9 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * get email data which contains sender, receiver and time converted to integer from string
+     * get email data which contains sender, receiver and time converted to integer from string.
      *
-     * @return email data in integer form
+     * @return email data in integer form. If data was empty, return empty list.
      */
 
     private List<List<Integer>> getUDWI_data() {
@@ -75,17 +86,7 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * get user interactions, also known as edges
-     *
-     * @return user interactions
-     */
-
-    protected List<List<Integer>> getuserInteractions() {
-        return userInteractions;
-    }
-
-    /**
-     * get users, also known as nodes
+     * get nodes in the graph. If graph is empty, return empty list.
      *
      * @return users
      */
@@ -95,7 +96,7 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * get weight map
+     * get a map that maps node to amount of times sending/receiving emails.
      *
      * @param data data consists of sender, receiver, and time converted to integer from string
      * @return weightMap which represents how many times the emails have been sent between two
@@ -107,7 +108,7 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * make UDWIG by putting each user and his or her interactions with other users
+     * make an adjacency graph.
      */
 
     private void getRelations() {
@@ -130,13 +131,12 @@ public class UDWInteractionGraph {
             if (sentItself != 1) {
                 adjacencySet.remove(eachUser);
             }
-            sentItself = 0;
             UDWIG.put(eachUser, new ArrayList<>(adjacencySet));
         }
     }
 
     /**
-     * make weight map
+     * make a map that maps node to amount of times sending/receiving emails.
      *
      * @param data data consists of sender, receiver, and time converted to integer from string
      * @return weightMap which represents how many times the emails have been sent between two
@@ -167,7 +167,7 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * add all weights between user1 and user2
+     * add all number of emails sent/received between user1 and user2
      *
      * @param userA user1
      * @param userB user2
@@ -193,7 +193,7 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * convert data from string to integer
+     * convert data from string to integer. If file is empty, return an empty list.
      *
      * @param fileName file name
      * @return data that has been converted from string to integer. It consists of sender,
@@ -218,7 +218,7 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * converts from string to integer
+     * converts each line of file from string to integer, and pack it into a list.
      *
      * @param fileLine each line of file
      * @return each fileline that has been converted from string to integer
@@ -237,8 +237,8 @@ public class UDWInteractionGraph {
 
 
     /**
-     * Creates a new UDWInteractionGraph from a UDWInteractionGraph object
-     * and considering a time window filter.
+     * Creates a new UDWInteractionGraph from a UDWInteractionGraph object by getting rid of data
+     * that are not within the time range.
      *
      * @param inputUDWIG a UDWInteractionGraph object
      * @param timeFilter an integer array of length 2: [t0, t1]
@@ -264,7 +264,7 @@ public class UDWInteractionGraph {
 
     /**
      * Creates a new UDWInteractionGraph from a UDWInteractionGraph object
-     * and considering a list of User IDs.
+     * by getting rid of data where specified users are not included.
      *
      * @param inputUDWIG a UDWInteractionGraph object
      * @param userFilter a List of User IDs. The created UDWInteractionGraph
@@ -297,6 +297,8 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * return set of user IDs.
+     *
      * @return a Set of Integers, where every element in the set is a User ID
      * in this UDWInteractionGraph.
      */
@@ -306,6 +308,8 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * return number of times emails sent from a specified sender to a receiver.
+     *
      * @param sender   the User ID of the sender in the email transaction.
      * @param receiver the User ID of the receiver in the email transaction.
      * @return the number of emails sent from the specified sender to the specified
@@ -322,16 +326,14 @@ public class UDWInteractionGraph {
 
         if (emailWeightMap.containsKey(user)) {
             return emailWeightMap.get(user);
-        } else if (emailWeightMap.containsKey(userComplement)) {
-            return emailWeightMap.get(userComplement);
-        } else {
-            return 0;
-        }
+        } else return emailWeightMap.getOrDefault(userComplement, 0);
     }
 
     /* ------- Task 2 ------- */
 
     /**
+     * get total email transactions within a certain time range.
+     *
      * @param timeWindow is an int array of size 2 [t0, t1]
      *                   where t0<=t1
      * @return an int array of length 2, with the following structure:
@@ -365,6 +367,9 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * get number of email interaction and number of unique email interaction, that is, email sent
+     * or received only once for a specified user ID.
+     *
      * @param userID the User ID of the user for which
      *               the report will be created
      * @return an int array of length 2 with the following structure:
@@ -403,6 +408,8 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * get Nth most active user, that is, a user with Nth most email interactions.
+     *
      * @param N a positive number representing rank. N=1 means the most active.
      * @return the User ID for the Nth most active user
      */
@@ -461,6 +468,9 @@ public class UDWInteractionGraph {
     /* ------- Task 3 ------- */
 
     /**
+     * return number of components in a graph, where a component is a part of graph that is
+     * completely disjointed by other parts of graph.
+     *
      * @return the number of completely disjoint graph
      * components in the UDWInteractionGraph object.
      */
@@ -474,6 +484,9 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * check whether path exists between two specified users. Return true if path does exist, false
+     * otherwise.
+     *
      * @param userID1 the user ID for the first user
      * @param userID2 the user ID for the second user
      * @return whether a path exists between the two users
@@ -495,24 +508,39 @@ public class UDWInteractionGraph {
         return false;
     }
 
+    /**
+     * find number of components in a graph
+     *
+     * @param componentSet a set that contains components.
+     * @param userSet a set that contains users that have been added to a component already.
+     */
+
     private void findComponents(Set<Set<Integer>> componentSet, Set<Integer> userSet) {
         for (int i = 0; i < users.size(); i++) {
             Set<Integer> path = new HashSet<>();
             int eachUser = users.get(i);
             if (!userSet.contains(eachUser)) {
                 path.add(eachUser);
-                getNumberOfComponenets(eachUser, path);
+                findPath(eachUser, path);
                 componentSet.add(path);
             }
             userSet.addAll(new ArrayList<>(path));
         }
     }
 
-    private void getNumberOfComponenets(int eachUser, Set<Integer> path) {
+    /**
+     * find path of a specified user, where path in this context means a set of users that the
+     * specified user can get to.
+     *
+     * @param eachUser a specified user
+     * @param path set os users where specified user can get to.
+     */
+
+    private void findPath (int eachUser, Set<Integer> path) {
         for (int i = 0; i < UDWIG.get(eachUser).size(); i++) {
             if (!path.contains(UDWIG.get(eachUser).get(i))) {
                 path.add(UDWIG.get(eachUser).get(i));
-                getNumberOfComponenets(UDWIG.get(eachUser).get(i), path);
+                findPath(UDWIG.get(eachUser).get(i), path);
             }
         }
     }
