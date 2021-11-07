@@ -12,15 +12,25 @@ import java.util.Set;
 public class Junsu_Test {
 
     private static DWInteractionGraph selfEmailing;
-
+    private static DWInteractionGraph weirdFormattedFile;
+    private static DWInteractionGraph empty;
 
     @BeforeAll
     public static void setupTests() {
         selfEmailing = new DWInteractionGraph("resources/Junsu_Task3_emailToMyself.txt");
+//        weirdFormattedFile = new DWInteractionGraph("resources/weirdFormat.txt");
+        empty = new DWInteractionGraph("resources/empty.txt");
     }
     // get Email count. What if there's no weight between sender and receiver?
 
-    // Task1 what if there are more than one spacing between number in raw data
+    // Task1 what if
+    // there are more than one spacing between number in raw data
+    // there are spaces before first character?
+
+//    @Test
+//    public void testWeirdFormattedFile() {
+//        Assertions.assertArrayEquals(new int[]{1, 2, 4}, weirdFormattedFile.ReportOnUser(2));
+//    }
 
     // What if no interaction at all? will graph be made?
 
@@ -34,13 +44,21 @@ public class Junsu_Test {
 
     // Task 3, what if user sent an email to user itself?
     @Test
-    public void test1GetUserIDsBase() {
-//        List<Integer> expected = Arrays.asList(0);
-//        Assertions.assertEquals(expected, selfEmailing.DFS(0, 0));
-//        List<Integer> expected1 = Arrays.asList(1);
-//        Assertions.assertEquals(expected1, selfEmailing.DFS(1, 1));
+    public void testPathSameFrom_To() {
+        List<Integer> expected = Arrays.asList(0);
+        Assertions.assertEquals(expected, selfEmailing.DFS(0, 0));
+        List<Integer> expected1 = Arrays.asList(1);
+        Assertions.assertEquals(expected1, selfEmailing.DFS(1, 1));
         // No path between user 0 and 1
         Assertions.assertNull(selfEmailing.DFS(0, 1));
     }
+
+    @Test
+    public void twoPossiblePaths() {
+        List<Integer> expected = Arrays.asList(1);
+        Assertions.assertEquals(expected, selfEmailing.DFS(1, 1));
+    }
     // Task3 DFS, what if there are too many cycles?
+
+    // Task 4, what if the input data are not ordered in increasing order?
 }
