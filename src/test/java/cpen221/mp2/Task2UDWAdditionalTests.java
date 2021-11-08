@@ -65,22 +65,35 @@ public class Task2UDWAdditionalTests {
 
     @Test
     public void testNthActiveUser1() {
-        UDWInteractionGraph t = new UDWInteractionGraph(testGraph, new int[] {16, 16});
-        Assertions.assertEquals(8, t.NthMostActiveUser(1));
+        UDWInteractionGraph t = new UDWInteractionGraph(testGraph, new int[] {53, 53});
+        Assertions.assertEquals(1, t.NthMostActiveUser(1));  // was 16
+        Assertions.assertEquals(7, t.NthMostActiveUser(2));  // was 1
+        Assertions.assertEquals(8, t.NthMostActiveUser(3));  // was 21
+        Assertions.assertEquals(16, t.NthMostActiveUser(5)); // was 23
     }
 
     @Test
     public void testNthActiveUser2() {
-        Assertions.assertEquals(20, testGraph.NthMostActiveUser(2));
+        Assertions.assertEquals(13, testGraph.NthMostActiveUser(2));
     }
 
     @Test
     public void testNthActiveUser3() {
-        Assertions.assertEquals(3, testGraph.NthMostActiveUser(3));
+        Assertions.assertEquals(14, testGraph.NthMostActiveUser(3));
     }
 
     @Test
     public void testNthActiveUser4() {
-        Assertions.assertEquals(-1, testGraph.NthMostActiveUser(20));
+        Assertions.assertEquals(20, testGraph.NthMostActiveUser(4));
+    }
+
+    @Test
+    public void testNthActiveUser5() {
+        Assertions.assertEquals(29, testGraph.NthMostActiveUser(27));
+    }
+
+    @Test
+    public void testNthActiveUser6() {
+        Assertions.assertEquals(-1, testGraph.NthMostActiveUser(28));
     }
 }
