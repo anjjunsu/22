@@ -232,7 +232,7 @@ public class DWInteractionGraph {
             for (String fileLine = reader.readLine();
                  fileLine != null;
                  fileLine = reader.readLine()) {
-                 dataInteger.add(stringToInteger(fileLine));
+                dataInteger.add(stringToInteger(fileLine));
             }
             reader.close();
         } catch (IOException ioe) {
@@ -279,7 +279,8 @@ public class DWInteractionGraph {
 
         // Filter out data out of input time window
         for (List list : data) {
-            if ((int) list.get(TIME) >= timeWindow[START_TIME_INDEX] && (int) list.get(TIME) <= timeWindow[END_TIME_INDEX]) {
+            if ((int) list.get(TIME) >= timeWindow[START_TIME_INDEX] &&
+                (int) list.get(TIME) <= timeWindow[END_TIME_INDEX]) {
                 timeFilteredData.add(list);
                 numEmailTransaction++;
             }
@@ -376,10 +377,12 @@ public class DWInteractionGraph {
 
         // Filter out zero number of email sent or received and Sort List in non-increasing order
         sendRanking =
-            sendRanking.stream().filter(value -> value.getValue() > 0).sorted(Comparator.comparing(Element::getValue).reversed().thenComparing(Element::getIndex))
+            sendRanking.stream().filter(value -> value.getValue() > 0).sorted(
+                    Comparator.comparing(Element::getValue).reversed().thenComparing(Element::getIndex))
                 .collect(Collectors.toList());
         receiveRanking =
-            receiveRanking.stream().filter(value -> value.getValue() > 0).sorted(Comparator.comparing(Element::getValue).reversed().thenComparing(Element::getIndex))
+            receiveRanking.stream().filter(value -> value.getValue() > 0).sorted(
+                    Comparator.comparing(Element::getValue).reversed().thenComparing(Element::getIndex))
                 .collect(Collectors.toList());
 
         if (interactionType == SendOrReceive.SEND) {
@@ -395,12 +398,6 @@ public class DWInteractionGraph {
             NthMostActiveUser = receiveRanking.get(N - 1).getIndex();
         }
 
-        // remove
-        System.out.println("++++++++++++++++++++++++++");
-        System.out.println("Sender Ranking is");
-        sendRanking.stream().forEach(Element::print);
-        System.out.println("Receiver Ranking is");
-        receiveRanking.stream().forEach(Element::print);
         return NthMostActiveUser;
     }
 
