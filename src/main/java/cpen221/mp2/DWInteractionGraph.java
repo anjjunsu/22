@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class DWInteractionGraph {
@@ -546,18 +545,15 @@ public class DWInteractionGraph {
         int node = startUser;
         Set<Integer> nodeVisited = new HashSet<>(node);
         List<Integer> path = new ArrayList<>(node);
-        AtomicInteger time = new AtomicInteger(startTime);
 
         while (!q.isEmpty()) {
             List<Integer> nodeList = new ArrayList<>();
             node = q.poll();
             int nodeInLambda = node;
-            int lambdaTime = time.get();
 
             timeFilteredData.forEach(x -> {
-                if (x.get(SENDER) == nodeInLambda && x.get(TIME) >= lambdaTime) {
+                if (x.get(SENDER) == nodeInLambda && x.get(TIME) >= startTime) {
                     nodeList.add(x.get(RECEIVER));
-                    time.set(x.get(TIME));
                 }
             });
             nodeList.forEach(x -> {
