@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -456,19 +457,30 @@ public class UDWInteractionGraph {
         for (int c = 0; c < users.size() - 1; c++) {
             for (int k = 0; k < users.size() - c - 1; k++) {
                 if (userTotalEmailList[k] < userTotalEmailList[k + 1]) {
-                    int temp1 = userTotalEmailList[k];
-                    userTotalEmailList[k] = userTotalEmailList[k + 1];
-                    userTotalEmailList[k + 1] = temp1;
-
-                    int temp2 = eachUserList[k];
-                    eachUserList[k] = eachUserList[k + 1];
-                    eachUserList[k + 1] = temp2;
+                    swap(k, userTotalEmailList);
+                    swap(k, eachUserList);
                 }
-
+                if (eachUserList[k] > eachUserList[k + 1] &&
+                    userTotalEmailList[k] == userTotalEmailList[k + 1]) {
+                    swap(k, eachUserList);
+                }
             }
         }
         return (N > eachUserList.length) ? -1 : eachUserList[N - 1];
     }
+
+    /**
+     * swap an element from the array at the specified index with its adjacent element
+     * @param k             index of the element to swap
+     * @param arrayToSwap   array that needs its two elements to be swapped
+     */
+
+    private void swap(int k, int[] arrayToSwap) {
+        int temp = arrayToSwap[k];
+        arrayToSwap[k] = arrayToSwap[k+1];
+        arrayToSwap[k + 1] = temp;
+    }
+
 
 
     /* ------- Task 3 ------- */
