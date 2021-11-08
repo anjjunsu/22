@@ -37,7 +37,7 @@ public class Task3DWAdditionalTests {
 
     @Test
     public void testDFSGraph1() {
-        List<Integer> expected = Arrays.asList(0, 7, 3, 2 ,4);
+        List<Integer> expected = Arrays.asList(0, 7, 3, 2, 4);
         Assertions.assertEquals(expected, dwGraph1.DFS(0, 4));
     }
 

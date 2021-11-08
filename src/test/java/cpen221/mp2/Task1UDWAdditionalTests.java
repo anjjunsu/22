@@ -31,28 +31,34 @@ public class Task1UDWAdditionalTests {
 
     @Test
     public void testGetUserIdsBaseGraph() {
-        Assertions.assertEquals(new HashSet<>(Arrays.asList(1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-                                                            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30)), baseGraph.getUserIDs());
+        Assertions.assertEquals(
+            new HashSet<>(Arrays.asList(1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30)), baseGraph.getUserIDs());
     }
 
     @Test
     public void testGetUserIdsTimeGraph1() {
-        Assertions.assertEquals(new HashSet<>(Arrays.asList(14, 8, 22, 13, 15, 20, 26, 29, 21)), timeFilteredGraph1.getUserIDs());
+        Assertions.assertEquals(new HashSet<>(Arrays.asList(14, 8, 22, 13, 15, 20, 26, 29, 21)),
+            timeFilteredGraph1.getUserIDs());
     }
 
     @Test
     public void testGetUserIdsTimeGraph2() {
-        Assertions.assertEquals(new HashSet<>(Arrays.asList(1, 7, 8, 24, 21, 10, 23, 16)), timeFilteredGraph2.getUserIDs());
+        Assertions.assertEquals(new HashSet<>(Arrays.asList(1, 7, 8, 24, 21, 10, 23, 16)),
+            timeFilteredGraph2.getUserIDs());
     }
 
     @Test
     public void testGetUserIdsUserGraph1() {
-        Assertions.assertEquals(new HashSet<>(Arrays.asList(13, 15, 30, 10, 18, 21)), userFilteredGraph1.getUserIDs());
+        Assertions.assertEquals(new HashSet<>(Arrays.asList(13, 15, 30, 10, 18, 21)),
+            userFilteredGraph1.getUserIDs());
     }
 
     @Test
     public void testGetUserIdsUserGraph2() {
-        Assertions.assertEquals(new HashSet<>(Arrays.asList(14, 8, 16, 29, 21, 7, 3, 1, 18, 20, 26, 22, 30)), userFilteredGraph2.getUserIDs());
+        Assertions.assertEquals(
+            new HashSet<>(Arrays.asList(14, 8, 16, 29, 21, 7, 3, 1, 18, 20, 26, 22, 30)),
+            userFilteredGraph2.getUserIDs());
     }
 
     @Test
