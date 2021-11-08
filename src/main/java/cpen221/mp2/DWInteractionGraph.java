@@ -388,34 +388,32 @@ public class DWInteractionGraph {
      * if no path exists, should return null.
      */
     public List<Integer> BFS(int userID1, int userID2) {
-        Queue<Integer> q = new LinkedList<>();
-        q.add(userID1);
-        int node = userID1;
-        Set<Integer> nodeVisited = new HashSet<>(node);
-        List<Integer> path = new ArrayList<>(node);
-        List<Integer> noPath = new ArrayList<>();
+        Queue<Integer> queue = new LinkedList<>();
+        Set<Integer> isVisited = new LinkedHashSet<>();
+        Integer root = userID1;
+        boolean found = false;
 
-        while (!q.isEmpty()) {
-            List<Integer> nodeList = new ArrayList<>();
-            node = q.poll();
-            if (node == userID2) {
-                path.add(node);
-                return path;
-            } else {
-                DWG.get(node).forEach(x -> nodeList.add(x.getReceiver()));
-                nodeList.forEach(x -> {
-                    if (!nodeVisited.contains(x)) {
-                        q.add(x);
-                        nodeVisited.add(x);
-                    }
-                });
-                if (!path.contains(node)) {
-                    path.add(node);
+        queue.add(root);
+        isVisited.add(root);
+
+        while (!queue.isEmpty()) {
+            Integer current = queue.remove();
+            if (current == userID2) {
+                found = true;
+            }
+            for (Edge adjacent : DWG.get(current)) {
+
+                if (!isVisited.contains(adjacent.getReceiver()) && !isVisited.contains(userID2)) {
+                    queue.add(adjacent.getReceiver());
+                    isVisited.add(adjacent.getReceiver());
                 }
             }
         }
 
-        return noPath;
+        if (!found) {
+            return null;
+        }
+        return new ArrayList<>(isVisited);
     }
 
     /**
