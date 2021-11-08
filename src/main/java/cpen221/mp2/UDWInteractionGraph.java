@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,19 +49,20 @@ public class UDWInteractionGraph {
      * email data is very convenient to modify UDWIG.
      * The email interaction file will be in the resources directory.
      *
-     * @param fileName the name of the file in the resources
-     *                 directory containing email interactions
+     * @param fileName the name of the file in the resources, directory containing
+     *                 email interactions. File does not contain any negative integer string.
      */
 
     public UDWInteractionGraph(String fileName) {
         emailData = Collections.unmodifiableList(makeData(fileName));
         getUDWIG(emailData);
+        checkRep();
     }
 
     /**
      * create a new UDWInteractionGraph using Data. Set all properties of UDWInteractionGraph.
      *
-     * @param data is not Null
+     * @param data is not Null and does not contain negative integer.
      */
     private void getUDWIG(List<List<Integer>> data) {
         emailData = data;
@@ -74,6 +74,7 @@ public class UDWInteractionGraph {
         userInteractions.forEach(userSet::addAll);
         users = new ArrayList<>(userSet);
         getRelations();
+        checkRep();
     }
 
     /**
@@ -99,12 +100,14 @@ public class UDWInteractionGraph {
     /**
      * get a map that maps node to amount of times sending/receiving emails.
      *
-     * @param data data consists of sender, receiver, and time converted to integer from string
+     * @param data data consists of sender, receiver, and time converted to integer from string.
+     *             data does not contain negative integer.
      * @return weightMap which represents how many times the emails have been sent between two
      * users
      */
 
     private Map<List<Integer>, Integer> getEmailWeightMap(List<List<Integer>> data) {
+        checkRep();
         return makeWeightGraph(data);
     }
 
@@ -139,13 +142,14 @@ public class UDWInteractionGraph {
     /**
      * make a map that maps node to amount of times sending/receiving emails.
      *
-     * @param data data consists of sender, receiver, and time converted to integer from string
+     * @param data data consists of sender, receiver, and time converted to integer from string.
+     *             data does not contain negative integer.
      * @return weightMap which represents how many times the emails have been sent between two
      * users
      */
 
     private Map<List<Integer>, Integer> makeWeightGraph(List<List<Integer>> data) {
-        // key: user A, value: weight between each user
+        // key: sender and receiver. value: weight between each user.
         Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
         Set<List<Integer>> userListToExclude = new HashSet<>();
 
@@ -164,6 +168,7 @@ public class UDWInteractionGraph {
             userListToExclude.add(userListComplement);
         }
 
+        checkRep();
         return emailWeightMap;
     }
 
@@ -172,7 +177,7 @@ public class UDWInteractionGraph {
      *
      * @param userA user1
      * @param userB user2
-     * @param data  email data
+     * @param data  email data. data does not contain any negative integer.
      * @return count of emails sent between user1 and user2
      */
 
@@ -190,13 +195,14 @@ public class UDWInteractionGraph {
         for (int i = 0; i < dataNeeded.size(); i++) {
             weight++;
         }
+        checkRep();
         return weight;
     }
 
     /**
      * convert data from string to integer. If file is empty, return an empty list.
      *
-     * @param fileName file name
+     * @param fileName file name. File does not contain any negative integer string.
      * @return data that has been converted from string to integer. It consists of sender,
      * receiver and time
      */
@@ -214,14 +220,14 @@ public class UDWInteractionGraph {
         } catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
-
+        checkRep();
         return dataInteger;
     }
 
     /**
      * converts each line of file from string to integer, and pack it into a list.
      *
-     * @param fileLine each line of file
+     * @param fileLine each line of file. fileline does not contain negative integer string.
      * @return each fileline that has been converted from string to integer
      */
 
@@ -232,7 +238,7 @@ public class UDWInteractionGraph {
         for (String fileLinePart : fileLineParts) {
             integerList.add(Integer.parseInt(fileLinePart));
         }
-
+        checkRep();
         return integerList;
     }
 
@@ -241,7 +247,7 @@ public class UDWInteractionGraph {
      * Creates a new UDWInteractionGraph from a UDWInteractionGraph object by getting rid of data
      * that are not within the time range.
      *
-     * @param inputUDWIG a UDWInteractionGraph object
+     * @param inputUDWIG a UDWInteractionGraph object. It is not null.
      * @param timeFilter an integer array of length 2: [t0, t1]
      *                   where t0 <= t1. The created UDWInteractionGraph
      *                   should only include those emails in the input
@@ -260,6 +266,7 @@ public class UDWInteractionGraph {
         }
 
         getUDWIG(dataTimeConstrained);
+        checkRep();
     }
 
 
@@ -267,7 +274,7 @@ public class UDWInteractionGraph {
      * Creates a new UDWInteractionGraph from a UDWInteractionGraph object
      * by getting rid of data where specified users are not included.
      *
-     * @param inputUDWIG a UDWInteractionGraph object
+     * @param inputUDWIG a UDWInteractionGraph object. It is not null.
      * @param userFilter a List of User IDs. The created UDWInteractionGraph
      *                   should exclude those emails in the input
      *                   UDWInteractionGraph for which neither the sender
@@ -285,16 +292,18 @@ public class UDWInteractionGraph {
         }
 
         getUDWIG(data);
+        checkRep();
     }
 
     /**
      * Creates a new UDWInteractionGraph from a DWInteractionGraph object.
      *
-     * @param inputDWIG a DWInteractionGraph object
+     * @param inputDWIG a DWInteractionGraph object. It is not null.
      */
     public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
         emailData = inputDWIG.getDWI_data();
         getUDWIG(emailData);
+        checkRep();
     }
 
     /**
@@ -366,6 +375,7 @@ public class UDWInteractionGraph {
 
         // get original UDWIG
         getUDWIG(dataToPreserve);
+        checkRep();
         return reportActivity;
     }
 
@@ -538,4 +548,17 @@ public class UDWInteractionGraph {
         }
     }
 
+    /**
+     * check if representation invariants are held. Since checking if each element is non-negative
+     * is expensive, we write this condition on precondition of some methods that need
+     * representation invariant checking.
+     */
+
+    private void checkRep() {
+        assert emailWeightMap != null;
+        assert emailData != null;
+        assert users != null;
+        assert userInteractions != null;
+        assert UDWIG != null;
+    }
 }
