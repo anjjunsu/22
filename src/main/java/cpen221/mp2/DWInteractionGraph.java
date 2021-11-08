@@ -531,7 +531,7 @@ public class DWInteractionGraph {
                 });
 
                 for (Integer possibleUser : possibleUsers) {
-                    count = BFS_for_MaxBreached(possibleUser, timeFilteredData, timeList.get(i));
+                    count = BFS_for_MaxBreached(possibleUser, timeFilteredData);
                     if (count > maximumInfected) {
                         maximumInfected = count;
                     }
@@ -546,12 +546,10 @@ public class DWInteractionGraph {
      *
      * @param startUser        user who is first infected, and spreading emails
      * @param timeFilteredData data that fits within the time range provided
-     * @param startTime        time of first infection
      * @return maximum number of infection
      */
 
-    private int BFS_for_MaxBreached(int startUser, List<List<Integer>> timeFilteredData,
-                                    int startTime) {
+    private int BFS_for_MaxBreached(int startUser, List<List<Integer>> timeFilteredData) {
         Queue<Integer> q = new LinkedList<>();
         q.add(startUser);
         int node = startUser;
@@ -564,7 +562,7 @@ public class DWInteractionGraph {
             int nodeInLambda = node;
 
             timeFilteredData.forEach(x -> {
-                if (x.get(SENDER) == nodeInLambda && x.get(TIME) >= startTime) {
+                if (x.get(SENDER) == nodeInLambda) {
                     nodeList.add(x.get(RECEIVER));
                 }
             });
