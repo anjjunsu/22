@@ -20,10 +20,6 @@ public class UDWInteractionGraph {
 
     // make a graph: superclass of UDWInteractionGraph
 
-
-    /* ------- Task 1 ------- */
-    /* Building the Constructors */
-
     private Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
     private List<List<Integer>> emailData = new ArrayList<>();
     private List<Integer> users = new LinkedList<>();
@@ -43,6 +39,12 @@ public class UDWInteractionGraph {
     //                  each user.
     // UDWIG represents all email transactions between all users by a map.
 
+    /*Safety from rep exposure:*/
+    // All fields are private
+    // users is a mutable List, but getUserIDs() makes a defensive copy of users it returns.
+    // UDWIG and emailWeightMap are a mutable Map, emailData and userUnteractions are a mutable List of Integer List,
+    // and userList is a mutable List. But these types are never passed or returned in a public operation.
+
     /**
      * Creates a new UDWInteractionGraph using an email interaction file. When email interaction
      * file is passed, get the email data and then call getUDWIG method since working with
@@ -51,6 +53,7 @@ public class UDWInteractionGraph {
      *
      * @param fileName the name of the file in the resources, directory containing
      *                 email interactions. File does not contain any negative integer string.
+     * @throws IOException if an I/O error occurs
      */
 
     public UDWInteractionGraph(String fileName) {
@@ -94,7 +97,7 @@ public class UDWInteractionGraph {
      */
 
     private List<Integer> getUsers() {
-        return users;
+        return new ArrayList<>(users);
     }
 
     /**

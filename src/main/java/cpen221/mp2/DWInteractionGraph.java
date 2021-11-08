@@ -26,10 +26,11 @@ public class DWInteractionGraph {
     /* Abstraction Function */
     // Represent Directed Weighted Graph email interactions
 
-
     /*Safety from rep exposure:*/
     // All fields are private
-    // Use defensive copying when returning a mutable object
+    // userSet is a mutable Set, but getUserIDs() makes a defensive copy of the set it returns
+    // DWG is a mutable Map, email data and emailDataWithWeight is a mutable List of Integer List,
+    // and userList is a mutable List. But these types are never passed or returned in public operations.
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
@@ -37,6 +38,7 @@ public class DWInteractionGraph {
      *
      * @param fileName the name of the file in the resource
      *                 directory containing email interactions
+     * @throws IOException if an I/O error occurs
      */
     public DWInteractionGraph(String fileName) {
         emailData = new ArrayList<>(processData(fileName));
@@ -223,8 +225,7 @@ public class DWInteractionGraph {
             for (String fileLine = reader.readLine();
                  fileLine != null;
                  fileLine = reader.readLine()) {
-                dataInteger.add(stringToInteger(fileLine));
-
+                 dataInteger.add(stringToInteger(fileLine));
             }
             reader.close();
         } catch (IOException ioe) {
@@ -414,6 +415,7 @@ public class DWInteractionGraph {
         if (!userList.contains(userID1) || !userList.contains(userID2)) {
             return null;
         }
+
         queue.add(root);
         isVisited.add(root);
 
@@ -423,7 +425,6 @@ public class DWInteractionGraph {
                 found = true;
             }
             for (Edge adjacent : DWG.get(current)) {
-
                 if (!isVisited.contains(adjacent.getReceiver()) && !isVisited.contains(userID2)) {
                     queue.add(adjacent.getReceiver());
                     isVisited.add(adjacent.getReceiver());
@@ -434,6 +435,7 @@ public class DWInteractionGraph {
         if (!found) {
             return null;
         }
+
         return new ArrayList<>(isVisited);
     }
 
