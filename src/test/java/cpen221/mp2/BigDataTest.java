@@ -4,10 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 public class BigDataTest {
     private static DWInteractionGraph big;
     private static UDWInteractionGraph bigUDW;
@@ -15,12 +11,13 @@ public class BigDataTest {
     @BeforeAll
     public static void setupTests() {
         big = new DWInteractionGraph("resources/email-Eu-core-temporal.txt");
-//        bigUDW = new UDWInteractionGraph("resources/email-Eu-core-temporal.txt");
+        bigUDW = new UDWInteractionGraph("resources/email-Eu-core-temporal.txt");
     }
 
     @Test
-    public void isNoActivityUserFilteredOut() {
+    public void testingBigData() {
         int[] expected = big.ReportActivityInTimeWindow(new int[] {3, 6});
+        int NthUser = bigUDW.NthMostActiveUser(1);
         Assertions.assertEquals(1, 1);
     }
 }
