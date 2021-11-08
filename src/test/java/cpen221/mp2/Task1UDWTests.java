@@ -22,7 +22,8 @@ public class Task1UDWTests {
 
     @Test
     public void testGetUserIds() {
-        Assertions.assertEquals(new HashSet<>(Arrays.asList(0, 1, 2, 3)), testGraphBase.getUserIDs());
+        Assertions.assertEquals(new HashSet<>(Arrays.asList(0, 1, 2, 3)),
+            testGraphBase.getUserIDs());
     }
 
     @Test

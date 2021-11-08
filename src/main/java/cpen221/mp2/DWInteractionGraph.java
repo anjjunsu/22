@@ -376,31 +376,29 @@ public class DWInteractionGraph {
             receiveRanking.add(new Element((int) user, numReceive));
         }
 
-        // Sort List in non-increasing order
+        // Filter out zero number of email sent or received and Sort List in non-increasing order
         sendRanking =
-            sendRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed())
+            sendRanking.stream().filter(value -> value.getValue() > 0).sorted(
+                    Comparator.comparing(Element::getValue).reversed().thenComparing(Element::getIndex))
                 .collect(Collectors.toList());
         receiveRanking =
-            receiveRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed())
+            receiveRanking.stream().filter(value -> value.getValue() > 0).sorted(
+                    Comparator.comparing(Element::getValue).reversed().thenComparing(Element::getIndex))
                 .collect(Collectors.toList());
 
-        // Filter out User with zero number of email sent or receive from the List
         if (interactionType == SendOrReceive.SEND) {
-            validSendRank =
-                (int) sendRanking.stream().filter(x -> x.getValue() > 0).count();
-            if (N > validSendRank) {
+            if (N > sendRanking.size()) {
                 return -1;
             }
             NthMostActiveUser = sendRanking.get(N - 1).getIndex();
         }
         if (interactionType == SendOrReceive.RECEIVE) {
-            validReceiveRank =
-                (int) receiveRanking.stream().filter(x -> x.getValue() > 0).count();
-            if (N > validReceiveRank) {
+            if (N > receiveRanking.size()) {
                 return -1;
             }
             NthMostActiveUser = receiveRanking.get(N - 1).getIndex();
         }
+
         return NthMostActiveUser;
     }
 

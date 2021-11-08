@@ -18,7 +18,7 @@ public class Task2UDWTests {
 
     @Test
     public void testReportActivityInTimeWindow() {
-        int[] result = testGraphBase.ReportActivityInTimeWindow(new int[]{0, 1});
+        int[] result = testGraphBase.ReportActivityInTimeWindow(new int[] {0, 1});
         Assertions.assertEquals(3, result[0]);
         Assertions.assertEquals(2, result[1]);
     }
@@ -49,13 +49,13 @@ public class Task2UDWTests {
 
     @Test
     public void testNthActiveUser() {
-        UDWInteractionGraph t = new UDWInteractionGraph(testGraphBase, new int[]{0, 2});
+        UDWInteractionGraph t = new UDWInteractionGraph(testGraphBase, new int[] {0, 2});
         Assertions.assertEquals(0, t.NthMostActiveUser(1));
     }
 
     @Test
     public void testNthActiveUser1() {
-        UDWInteractionGraph t = new UDWInteractionGraph(testGraphBase, new int[]{0, 2});
+        UDWInteractionGraph t = new UDWInteractionGraph(testGraphBase, new int[] {0, 2});
         Assertions.assertEquals(1, t.NthMostActiveUser(2));
     }
 }

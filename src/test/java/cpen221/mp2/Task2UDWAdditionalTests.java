@@ -17,21 +17,21 @@ public class Task2UDWAdditionalTests {
 
     @Test
     public void testReportActivityInTimeWindow() {
-        int[] result = testGraph.ReportActivityInTimeWindow(new int[]{10, 30});
+        int[] result = testGraph.ReportActivityInTimeWindow(new int[] {10, 30});
         Assertions.assertEquals(9, result[0]);
         Assertions.assertEquals(9, result[1]);
     }
 
     @Test
     public void testReportActivityInTimeWindow1() {
-        int[] result = testGraph.ReportActivityInTimeWindow(new int[]{53, 53});
+        int[] result = testGraph.ReportActivityInTimeWindow(new int[] {53, 53});
         Assertions.assertEquals(8, result[0]);
         Assertions.assertEquals(4, result[1]);
     }
 
     @Test
     public void testReportActivityInTimeWindow2() {
-        int[] result = testGraph.ReportActivityInTimeWindow(new int[]{17, 20});
+        int[] result = testGraph.ReportActivityInTimeWindow(new int[] {17, 20});
         Assertions.assertEquals(0, result[0]);
         Assertions.assertEquals(0, result[1]);
     }
