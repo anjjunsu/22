@@ -62,22 +62,24 @@ public class DWInteractionGraph {
         checkRep();
     }
 
-    // Make DWI graph
+    /**
+     * For every sender, make edge which includes sender user ID, receiver user ID and number of email sent,
+     * add to the Map where key us sender ID and value is edge
+     */
     private void makeDWI() {
         DWG = new HashMap<Integer, LinkedList<Edge>>();
 
         for (Integer sender : userList) {
-            LinkedList<Edge> tempList = new LinkedList<>();
+            LinkedList<Edge> edge = new LinkedList<>();
             for (List data : emailDataWithWeight) {
                 if (data.get(SENDER) == sender) {
-                    // To prevent rep exposure. Not sure that this will be needed. But just in case
                     int receiver = (int) data.get(RECEIVER);
                     int weight = (int) data.get(WEIGHT);
-                    tempList.add(new Edge((int) sender, receiver, weight));
+                    edge.add(new Edge((int) sender, receiver, weight));
                 }
 
             }
-            DWG.put(sender, tempList);
+            DWG.put(sender, edge);
         }
         checkRep();
     }
@@ -160,8 +162,11 @@ public class DWInteractionGraph {
         printGraph();
     }
 
-    // Print DWI Graph in format of Sender = (Sender ID), Receiver = (Receiver ID), Weight = (Weight)
-    // Each user separated by a line
+    /**
+     * Print DWI Graph
+     * Format: "Sentder = (Sender ID), Receiver = (Receiver ID), Weight = (number of eamil sent)
+     * Each user is separated by line
+     */
     private void printGraph() {
         for (Integer sender : DWG.keySet()) {
             System.out.println("-------------------------------------");
@@ -195,7 +200,11 @@ public class DWInteractionGraph {
         return weight;
     }
 
-    // Make a data [sender, receiver, weight]
+    /**
+     * Convert the data with [Sender ID, Receiver ID, Sent time] to [sender ID, Receiver ID, number of email sent]
+     *
+     * @param data is not null, and each line have three non-negative integers separated by one or more space
+     */
     private void setEmailDataWithWeight(List<List<Integer>> data) {
         emailDataWithWeight = new ArrayList<>();
         userSet = new HashSet<>();
@@ -224,7 +233,11 @@ public class DWInteractionGraph {
         }
     }
 
-    // Read and process txt file to List of Integer List
+    /**
+     * @param fileName is text file we want to process
+     * @return
+     * @throws IOException if there are no such input text file exists
+     */
     private List<List<Integer>> processData(String fileName) {
         List<List<Integer>> dataInteger = new ArrayList<>();
         try {
@@ -241,7 +254,12 @@ public class DWInteractionGraph {
         return dataInteger;
     }
 
-    // Convert String to Integer
+    /**
+     * Convert a string to integer list that string represent
+     *
+     * @param fileLine String that contains three non-negative integer representation of string separated by space
+     * @return List of three non-negative integer
+     */
     private List<Integer> stringToInteger(String fileLine) {
         List<Integer> integerList = new ArrayList<>();
         String[] fileLineParts = fileLine.split("\\s+");
@@ -253,7 +271,9 @@ public class DWInteractionGraph {
         return integerList;
     }
 
-    // Return this DWI graph's email data
+    /**
+     * @return the copy of DWI graph's email interaction data which contains sender ID, receiver ID, and time of email sent
+     */
     protected List<List<Integer>> getDWI_data() {
         return new ArrayList<>(this.emailData);
     }
@@ -449,11 +469,11 @@ public class DWInteractionGraph {
      * performs depth first search on the DWInteractionGraph object
      * to check path between user with userID1 and user with userID2.
      *
-     * @param userID1 the user ID for the first user
-     * @param userID2 the user ID for the second user
+     * @param userID1 that we want to start DFS search from
+     * @param userID2 that is destination user ID of DFS search
      * @return if a path exists, returns aa list of user IDs
      * in the order encountered in the search.
-     * if no path exists, should return null.
+     * if no path exists, return null.
      */
     public List<Integer> DFS(int userID1, int userID2) {
         Set<Integer> isVisited = new LinkedHashSet<>();
@@ -472,6 +492,13 @@ public class DWInteractionGraph {
         return new ArrayList<>(isVisited);
     }
 
+    /**
+     * Perform DFS search recursively
+     * @param user current user(i.e. node) in this DFS search
+     * @param targetUser destination user ID
+     * @param isVisited Set that indicates user is already visited or not
+     * @return true if there is a path to destination user, otherwise, return false
+     */
     private boolean recursiveDFS(Integer user, Integer targetUser, Set<Integer> isVisited) {
         boolean found = false;
         isVisited.add(user);

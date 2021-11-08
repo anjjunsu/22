@@ -24,7 +24,7 @@ public class Junsu_Test {
     public static void setupTests() {
         selfEmailing = new DWInteractionGraph("resources/Junsu_Task3_emailToMyself.txt");
         noInteractionsAtAll = new DWInteractionGraph("resources/noInteractionsAtAll.txt");
-//        weirdFormattedFile = new DWInteractionGraph("resources/weirdFormat.txt");
+        weirdFormattedFile = new DWInteractionGraph("resources/weirdFormat.txt");
         empty = new DWInteractionGraph("resources/empty.txt");
         udwEmpty = new UDWInteractionGraph("resources/empty.txt");
         udwudw = new UDWInteractionGraph("resources/Junsu_UDW_Test.txt");
@@ -65,14 +65,13 @@ public class Junsu_Test {
     }
 
 
-    // Task1 what if
+    // Test what if
     // there are more than one spacing between number in raw data
     // there are spaces before first character?
-
-//    @Test
-//    public void testWeirdFormattedFile() {
-//        Assertions.assertArrayEquals(new int[]{1, 2, 4}, weirdFormattedFile.ReportOnUser(2));
-//    }
+    @Test
+    public void testWeirdFormattedFile() {
+        Assertions.assertArrayEquals(new int[]{3, 3, 3}, weirdFormattedFile.ReportOnUser(2));
+    }
 
     @Test
     public void testEmptyGraph() {
@@ -103,15 +102,7 @@ public class Junsu_Test {
         Assertions.assertEquals(-1, DUT.NthMostActiveUser(6, SendOrReceive.RECEIVE));
     }
 
-    // What if all the users are filtered out?
-
-    // In task2 time filter thing, what if time span is 0? like [11,11]
-
-    // In task 3 DFS, what if there is no path?
-
-    // In task 3 for both DW and UDW, what if input user id is not valid?
-
-    // Task 3, what if user sent an email to user itself?
+    // Task 3, test path from user to same user
     @Test
     public void testPathSameFrom_To() {
         List<Integer> expected = Arrays.asList(0);
@@ -120,16 +111,14 @@ public class Junsu_Test {
         Assertions.assertEquals(expected1, selfEmailing.DFS(1, 1));
     }
 
+    // Test the case there are more than one path exist
     @Test
     public void twoPossiblePaths() {
         List<Integer> expected = Arrays.asList(1);
         Assertions.assertEquals(expected, selfEmailing.DFS(1, 1));
     }
-    // Task3 DFS, what if there are too many cycles?
 
-    // Task 4, what if the input data are not ordered in increasing order?
-
-    //=========================UDW TESTS==================================//
+    // Test UDW graph's NthMostActiveUser
     @Test
     public void testUDW_NthMostActive() {
         Assertions.assertEquals(0, udwudw.NthMostActiveUser(1));
