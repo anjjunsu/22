@@ -21,7 +21,7 @@ public class DWInteractionGraph {
     // Every field only contains non-negative integers
     // For every sender, receiver and weight exists
     // Sender can have multiple receivers
-    // No duplicate user ID for userSet and userList
+    // No duplicate user ID for userSet
 
     /* Abstraction Function */
     // Represent Directed Weighted Graph email interactions
@@ -30,7 +30,6 @@ public class DWInteractionGraph {
     // All fields are private
     // userSet is a mutable Set, but getUserIDs() makes a defensive copy of the set it returns
     // DWG is a mutable Map, email data and emailDataWithWeight is a mutable List of Integer List,
-    // and userList is a mutable List. But these types are never passed or returned in public operations.
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
@@ -45,6 +44,8 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(emailData);
 
         makeDWI();
+
+        checkRep();
     }
 
     /**
@@ -95,6 +96,8 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(timeFilteredData);
 
         makeDWI();
+
+        checkRep();
     }
 
 
@@ -126,6 +129,8 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(userFilteredData);
 
         makeDWI();
+
+        checkRep();
     }
 
     /**
@@ -447,9 +452,10 @@ public class DWInteractionGraph {
 
     /**
      * Perform DFS search recursively
-     * @param user current user(i.e. node) in this DFS search
+     *
+     * @param user       current user(i.e. node) in this DFS search
      * @param targetUser destination user ID
-     * @param isVisited Set that indicates user is already visited or not
+     * @param isVisited  Set that indicates user is already visited or not
      * @return true if there is a path to destination user, otherwise, return false
      */
     private boolean recursiveDFS(Integer user, Integer targetUser, Set<Integer> isVisited) {
@@ -582,7 +588,6 @@ public class DWInteractionGraph {
      * is expensive, we write this condition on precondition of some methods that need
      * representation invariant checking.
      */
-
     private void checkRep() {
         assert DWG != null;
         assert emailDataWithWeight != null;

@@ -20,9 +20,10 @@ class Edge {
 
     /**
      * Construct a new Edge
-     * @param sender user ID of sender
+     *
+     * @param sender   user ID of sender
      * @param receiver user ID of receiver
-     * @param weight number of emails sent for the sender
+     * @param weight   number of emails sent for the sender
      */
     Edge(int sender, int receiver, int weight) {
         this.sender = sender;
@@ -35,24 +36,34 @@ class Edge {
      * In forms of "sender = (user ID of sender), receiver = (user ID of receiver), weight = (weight)
      */
     void printEdge() {
-        System.out.println("sender = " + sender + ", receiver = " + receiver + ", weight = " + weight);
+        System.out.println(
+            "sender = " + sender + ", receiver = " + receiver + ", weight = " + weight);
     }
 
     /**
      * Returns the user ID of sender who sends email
+     *
      * @return user ID of sender
      */
-    int getSender() { return sender; }
+    int getSender() {
+        return sender;
+    }
 
     /**
      * Returns the user ID of receiver who received email
+     *
      * @return receiver: user ID of receiver
      */
-    int getReceiver() { return receiver;}
+    int getReceiver() {
+        return receiver;
+    }
 
     /**
      * Returns the weight which is number of email interactions from sender to receiver
+     *
      * @return number of email interactions; weight
      */
-    int getWeight()  {return weight;}
+    int getWeight() {
+        return weight;
+    }
 }

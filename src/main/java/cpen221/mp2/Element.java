@@ -17,6 +17,7 @@ class Element {
 
     /**
      * Construct an Element with specified index and value
+     *
      * @param index which the specified value is to be associated
      * @param value to be associated with the specified index
      */
@@ -27,12 +28,16 @@ class Element {
 
     /**
      * Returns the index which the associated value is paired
+     *
      * @return index of this Element
      */
-    int getIndex() { return this.index; }
+    int getIndex() {
+        return this.index;
+    }
 
     /**
      * Returns the value to which the specified index is paired
+     *
      * @return value of this Element
      */
     int getValue() {
