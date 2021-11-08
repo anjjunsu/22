@@ -45,21 +45,6 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(emailData);
 
         makeDWI();
-
-        // remove below
-        for (List l : emailData) {
-            System.out.println(l);
-        }
-        System.out.println("User Set" + userSet);
-        System.out.println("User List is " + userList);
-        System.out.println("===Email data with weight===");
-        for (List<Integer> ll : emailDataWithWeight) {
-            System.out.println(ll);
-        }
-        // remove
-        printGraph();
-
-        checkRep();
     }
 
     /**
@@ -81,7 +66,6 @@ public class DWInteractionGraph {
             }
             DWG.put(sender, edge);
         }
-        checkRep();
     }
 
     /**
@@ -111,12 +95,6 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(timeFilteredData);
 
         makeDWI();
-
-        checkRep();
-        // Remove
-        System.out.println();
-        System.out.println("===Time Filtered DWI===");
-        printGraph();
     }
 
 
@@ -147,33 +125,7 @@ public class DWInteractionGraph {
         emailData = new ArrayList<>(userFilteredData);
         setEmailDataWithWeight(userFilteredData);
 
-        // remove
-        System.out.println("email data with weight after user filter: ");
-        for (List l : emailDataWithWeight) {
-            System.out.println(l);
-        }
         makeDWI();
-
-        checkRep();
-
-        // Remove
-        System.out.println();
-        System.out.println("===User Filtered DWI===");
-        printGraph();
-    }
-
-    /**
-     * Print DWI Graph
-     * Format: "Sentder = (Sender ID), Receiver = (Receiver ID), Weight = (number of eamil sent)
-     * Each user is separated by line
-     */
-    private void printGraph() {
-        for (Integer sender : DWG.keySet()) {
-            System.out.println("-------------------------------------");
-            List<Edge> listToPrint = new LinkedList<>();
-            listToPrint = DWG.get(sender);
-            listToPrint.stream().forEach(x -> x.printEdge());
-        }
     }
 
     /**
@@ -272,7 +224,8 @@ public class DWInteractionGraph {
     }
 
     /**
-     * @return the copy of DWI graph's email interaction data which contains sender ID, receiver ID, and time of email sent
+     * @return the copy of DWI graph's email interaction data
+     * which contains sender ID, receiver ID, and time of email sent
      */
     protected List<List<Integer>> getDWI_data() {
         return new ArrayList<>(this.emailData);
