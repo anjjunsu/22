@@ -36,10 +36,10 @@ public class Junsu_Test {
         Assertions.assertEquals(3, selfEmailing.NthMostActiveUser(2, SendOrReceive.RECEIVE));
     }
 
-   // Test cases where interactions do not exist at all
+    // Test cases where interactions do not exist at all
     @Test
     public void noInteraction() {
-        Assertions.assertEquals(0, selfEmailing.getEmailCount(0,1));
+        Assertions.assertEquals(0, selfEmailing.getEmailCount(0, 1));
         Assertions.assertEquals(0, noInteractionsAtAll.getEmailCount(0, 3));
     }
 
@@ -76,7 +76,8 @@ public class Junsu_Test {
     public void testEmptyGraph() {
         int[] expected1 = {0, 0, 0};
         Assertions.assertArrayEquals(expected1, empty.ReportOnUser(0));
-        Assertions.assertArrayEquals(expected1, empty.ReportActivityInTimeWindow(new int[]{0, 1000}));
+        Assertions.assertArrayEquals(expected1,
+            empty.ReportActivityInTimeWindow(new int[] {0, 1000}));
         Assertions.assertEquals(-1, empty.NthMostActiveUser(1, SendOrReceive.SEND));
     }
 

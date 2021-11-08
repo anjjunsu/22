@@ -17,7 +17,7 @@ public class Task1DWTests {
     @BeforeAll
     public static void setupTests() {
         dwig = new DWInteractionGraph("resources/Task1-2Transactions.txt");
-        dwig1 = new DWInteractionGraph(dwig, new int[]{3, 9});
+        dwig1 = new DWInteractionGraph(dwig, new int[] {3, 9});
         dwig2 = new DWInteractionGraph(dwig, Arrays.asList(2, 3, 4));
     }
 

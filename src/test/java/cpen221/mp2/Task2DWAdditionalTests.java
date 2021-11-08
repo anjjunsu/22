@@ -16,41 +16,44 @@ public class Task2DWAdditionalTests {
 
     @Test
     public void testReportActivityInTimeWindow() {
-        int[] expected1 = new int[]{5, 6, 9};
-        Assertions.assertArrayEquals(expected1, testGraph.ReportActivityInTimeWindow(new int[]{10, 30}));
+        int[] expected1 = new int[] {5, 6, 9};
+        Assertions.assertArrayEquals(expected1,
+            testGraph.ReportActivityInTimeWindow(new int[] {10, 30}));
     }
 
     @Test
     public void testReportActivityInTimeWindow1() {
-        int[] expected2 = new int[]{4, 4, 4};
-        Assertions.assertArrayEquals(expected2, testGraph.ReportActivityInTimeWindow(new int[]{53, 53}));
+        int[] expected2 = new int[] {4, 4, 4};
+        Assertions.assertArrayEquals(expected2,
+            testGraph.ReportActivityInTimeWindow(new int[] {53, 53}));
     }
 
     @Test
     public void testReportActivityInTimeWindow2() {
-        int[] expected2 = new int[]{0, 0, 0};
-        Assertions.assertArrayEquals(expected2, testGraph.ReportActivityInTimeWindow(new int[]{17, 20}));
+        int[] expected2 = new int[] {0, 0, 0};
+        Assertions.assertArrayEquals(expected2,
+            testGraph.ReportActivityInTimeWindow(new int[] {17, 20}));
     }
 
     @Test
     public void testReportOnUser() {
-        Assertions.assertArrayEquals(new int[]{2, 2, 3}, testGraph.ReportOnUser(20));
+        Assertions.assertArrayEquals(new int[] {2, 2, 3}, testGraph.ReportOnUser(20));
     }
 
     @Test
     public void testReportOnUser1() {
         DWInteractionGraph t = new DWInteractionGraph(testGraph, new int[] {10, 30});
-        Assertions.assertArrayEquals(new int[]{2, 1, 2}, t.ReportOnUser(20));
+        Assertions.assertArrayEquals(new int[] {2, 1, 2}, t.ReportOnUser(20));
     }
 
     @Test
     public void testReportOnUser2() {
-        Assertions.assertArrayEquals(new int[]{4, 1, 2}, testGraph.ReportOnUser(14));
+        Assertions.assertArrayEquals(new int[] {4, 1, 2}, testGraph.ReportOnUser(14));
     }
 
     @Test
     public void testReportOnUser3() {
-        Assertions.assertArrayEquals(new int[]{0, 0, 0}, testGraph.ReportOnUser(6));
+        Assertions.assertArrayEquals(new int[] {0, 0, 0}, testGraph.ReportOnUser(6));
     }
 
     @Test
