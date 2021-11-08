@@ -124,6 +124,8 @@ public class UDWInteractionGraph {
             Set<Integer> adjacencySet = new HashSet<>();
             int eachUser = users.get(i);
             int sentItself = 0;
+            // for each user, get all the other users that have sent/received
+            // email to/from the user.
             for (int j = 0; j < userInteractions.size(); j++) {
                 if ((userInteractions.get(j).get(USER_A) == eachUser) ||
                     (userInteractions.get(j).get(USER_B) == eachUser)) {
@@ -157,6 +159,8 @@ public class UDWInteractionGraph {
         Map<List<Integer>, Integer> emailWeightMap = new HashMap<>();
         Set<List<Integer>> userListToExclude = new HashSet<>();
 
+        // userListComplement needs to be considered since weightMap does not divide sender and
+        // receiver for undirected graph
         for (int i = 0; i < data.size(); i++) {
             List<Integer> userList = new ArrayList<>();
             List<Integer> userListComplement = new ArrayList<>();
@@ -435,6 +439,7 @@ public class UDWInteractionGraph {
         int[] userTotalEmailList = new int[users.size()];
         int[] eachUserList = new int[users.size()];
 
+        // eachUserList is there to indicate which email weight belongs to which
         for (int i = 0; i < users.size(); i++) {
             int userEmailTotal = 0;
             for (int j = 0; j < userList.size(); j++) {
@@ -453,7 +458,7 @@ public class UDWInteractionGraph {
             userTotalEmailList[i] = userEmailTotal;
             eachUserList[i] = users.get(i);
         }
-
+        // use bubble sort to sort both email weight list and the user at the same time
         for (int c = 0; c < users.size() - 1; c++) {
             for (int k = 0; k < users.size() - c - 1; k++) {
                 if (userTotalEmailList[k] < userTotalEmailList[k + 1]) {
@@ -471,13 +476,14 @@ public class UDWInteractionGraph {
 
     /**
      * swap an element from the array at the specified index with its adjacent element
-     * @param k             index of the element to swap
-     * @param arrayToSwap   array that needs its two elements to be swapped
+     *
+     * @param k           index of the element to swap
+     * @param arrayToSwap array that needs its two elements to be swapped
      */
 
     private void swap(int k, int[] arrayToSwap) {
         int temp = arrayToSwap[k];
-        arrayToSwap[k] = arrayToSwap[k+1];
+        arrayToSwap[k] = arrayToSwap[k + 1];
         arrayToSwap[k + 1] = temp;
     }
 
