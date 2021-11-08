@@ -16,6 +16,7 @@ public class Junsu_Test {
     private static DWInteractionGraph weirdFormattedFile;
     private static DWInteractionGraph empty;
     private static UDWInteractionGraph udwudw;
+    private static DWInteractionGraph timeFiltered;
 
 
     @BeforeAll
@@ -25,6 +26,7 @@ public class Junsu_Test {
 //        weirdFormattedFile = new DWInteractionGraph("resources/weirdFormat.txt");
         empty = new DWInteractionGraph("resources/empty.txt");
         udwudw = new UDWInteractionGraph("resources/Junsu_UDW_Test.txt");
+        timeFiltered = new DWInteractionGraph("resources/Junsu_DWI_NthMost_TimeFilter.txt");
     }
 
     //Task2 [NthMostActive]: Test 0 activity user filtered out
@@ -76,6 +78,17 @@ public class Junsu_Test {
         Assertions.assertArrayEquals(expected1, empty.ReportOnUser(0));
         Assertions.assertArrayEquals(expected1, empty.ReportActivityInTimeWindow(new int[]{0, 1000}));
         Assertions.assertEquals(-1, empty.NthMostActiveUser(1, SendOrReceive.SEND));
+    }
+
+    // Test NthMostActiveUser on time filtered DWI
+    @Test
+    public void timeFilteredDWI() {
+        DWInteractionGraph DUT = new DWInteractionGraph(timeFiltered, new int[] {13, 50});
+        Assertions.assertEquals(0, DUT.NthMostActiveUser(1, SendOrReceive.SEND));
+        Assertions.assertEquals(-1, DUT.NthMostActiveUser(5, SendOrReceive.SEND));
+        Assertions.assertEquals(2, DUT.NthMostActiveUser(2, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(4, DUT.NthMostActiveUser(5, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(-1, DUT.NthMostActiveUser(6, SendOrReceive.RECEIVE));
     }
 
     // What if all the users are filtered out?
