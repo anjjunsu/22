@@ -492,54 +492,66 @@ public class DWInteractionGraph {
     /**
      * Calculate the maximum number of users polluted by the malicious email in N hours
      *
-     * @param hours is delaying time of triggering fire wall after the first attack of a hacker
-     * @return the maximum number of users that can be polluted in N hours
+     * @param hours is delaying time of triggering fire wall after the first attack of a hacker.
+     *              Hours is positive integer.
+     * @return the maximum number of users that can be polluted in N hours.
      */
     public int MaxBreachedUserCount(int hours) {
-        int totalSeconds = hours * 3600;
-        int maximumInfected = 0;
-        List<Integer> timeList = new ArrayList<>();
+        if (hours < 0) {
+            return 0;
+        } else {
+            int totalSeconds = hours * 3600;
+            int maximumInfected = 0;
+            List<Integer> timeList = new ArrayList<>();
 
-        getDWI_data().forEach(x -> timeList.add(x.get(TIME)));
-        Collections.sort(timeList);
+            getDWI_data().forEach(x -> timeList.add(x.get(TIME)));
+            Collections.sort(timeList);
 
-        for (int i = 0; i < timeList.size() - 1; i++) {
-            int timeLimit = timeList.get(i) + totalSeconds;
-            int j = i + 1;
-            int count = 0;
-            List<Integer> possibleUsers = new ArrayList<>();
-            List<List<Integer>> timeFilteredData;
+            // get appropriate data of user email transactions using time filter
+            // to calculate the maximum number of users that can be infected
+            for (int i = 0; i < timeList.size() - 1; i++) {
+                int timeLimit = timeList.get(i) + totalSeconds;
+                int j = i + 1;
+                int count = 0;
+                List<Integer> possibleUsers = new ArrayList<>();
+                List<List<Integer>> timeFilteredData;
 
-            while (j < timeList.size() && timeList.get(j) < timeLimit) {
-                j++;
-            }
-            j--;
-            int timeI = i;
-
-            timeFilteredData = getFilteredData(timeList.get(i), timeList.get(j));
-
-            timeFilteredData.forEach(x -> {
-                if (x.contains(timeList.get(timeI))) {
-                    possibleUsers.add(x.get(SENDER));
+                while (j < timeList.size() && timeList.get(j) < timeLimit) {
+                    j++;
                 }
-            });
+                j--;
+                int timeI = i;
 
-            for (Integer possibleUser : possibleUsers) {
-                count = getMaxCount(possibleUser, timeFilteredData, timeList.get(i));
-                if (count > maximumInfected) {
-                    maximumInfected = count;
+                timeFilteredData = getFilteredData(timeList.get(i), timeList.get(j));
+
+                timeFilteredData.forEach(x -> {
+                    if (x.contains(timeList.get(timeI))) {
+                        possibleUsers.add(x.get(SENDER));
+                    }
+                });
+
+                for (Integer possibleUser : possibleUsers) {
+                    count = BFS_for_MaxBreached(possibleUser, timeFilteredData, timeList.get(i));
+                    if (count > maximumInfected) {
+                        maximumInfected = count;
+                    }
                 }
             }
+            return maximumInfected;
         }
-        return maximumInfected;
     }
 
-    private int getMaxCount(int startUser, List<List<Integer>> timeFilteredData, int startTime) {
-        return BFS_for_MaxBreached(startUser, timeFilteredData, startTime).size();
-    }
+    /**
+     * get maximum number of infection
+     *
+     * @param startUser        user who is first infected, and spreading emails
+     * @param timeFilteredData data that fits within the time range provided
+     * @param startTime        time of first infection
+     * @return maximum number of infection
+     */
 
-    public List<Integer> BFS_for_MaxBreached(int startUser, List<List<Integer>> timeFilteredData,
-                                             int startTime) {
+    private int BFS_for_MaxBreached(int startUser, List<List<Integer>> timeFilteredData,
+                                    int startTime) {
         Queue<Integer> q = new LinkedList<>();
         q.add(startUser);
         int node = startUser;
@@ -566,8 +578,16 @@ public class DWInteractionGraph {
                 path.add(node);
             }
         }
-        return path;
+        return path.size();
     }
+
+    /**
+     * get email data after filtering with time filter.
+     *
+     * @param timeBegin time it starts
+     * @param timeEnd   time it ends
+     * @return list of data that fits within the time range
+     */
 
     private List<List<Integer>> getFilteredData(int timeBegin, int timeEnd) {
         List<List<Integer>> timeFilteredData = new ArrayList<>();
@@ -579,6 +599,12 @@ public class DWInteractionGraph {
         return timeFilteredData;
     }
 
+    /**
+     * check if representation invariants are held. Since checking if each element is non-negative
+     * is expensive, we write this condition on precondition of some methods that need
+     * representation invariant checking.
+     */
+
     private void checkRep() {
         assert DWG != null;
         assert emailDataWithWeight != null;
@@ -586,6 +612,6 @@ public class DWInteractionGraph {
         assert userSet != null;
         // Check no duplicates user ID in userList
         boolean isDuplicate = userList.stream().allMatch(new HashSet<>()::add);
-        assert isDuplicate == true;
+        assert isDuplicate;
     }
 }

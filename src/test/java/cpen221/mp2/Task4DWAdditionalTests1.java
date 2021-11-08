@@ -42,7 +42,7 @@ public class Task4DWAdditionalTests1 {
 
     @Test
     public void testMaxedBreachedUserCount3() {
-        Assertions.assertEquals(12, dwig3.MaxBreachedUserCount(12));
+        Assertions.assertEquals(8, dwig3.MaxBreachedUserCount(12));
     }
 
 }
