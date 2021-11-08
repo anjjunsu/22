@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class DWInteractionGraph {
@@ -232,7 +233,7 @@ public class DWInteractionGraph {
             for (String fileLine = reader.readLine();
                  fileLine != null;
                  fileLine = reader.readLine()) {
-                 dataInteger.add(stringToInteger(fileLine));
+                dataInteger.add(stringToInteger(fileLine));
             }
             reader.close();
         } catch (IOException ioe) {
@@ -279,7 +280,8 @@ public class DWInteractionGraph {
 
         // Filter out data out of input time window
         for (List list : data) {
-            if ((int) list.get(TIME) >= timeWindow[START_TIME_INDEX] && (int) list.get(TIME) <= timeWindow[END_TIME_INDEX]) {
+            if ((int) list.get(TIME) >= timeWindow[START_TIME_INDEX] &&
+                (int) list.get(TIME) <= timeWindow[END_TIME_INDEX]) {
                 timeFilteredData.add(list);
                 numEmailTransaction++;
             }
@@ -526,7 +528,7 @@ public class DWInteractionGraph {
             });
 
             for (Integer possibleUser : possibleUsers) {
-                count = getMaxCount(possibleUser, timeFilteredData);
+                count = getMaxCount(possibleUser, timeFilteredData, timeList.get(i));
                 if (count > maximumInfected) {
                     maximumInfected = count;
                 }
@@ -535,25 +537,29 @@ public class DWInteractionGraph {
         return maximumInfected;
     }
 
-    private int getMaxCount(int startUser, List<List<Integer>> timeFilteredData) {
-        return BFS_for_MaxBreached(startUser, timeFilteredData).size();
+    private int getMaxCount(int startUser, List<List<Integer>> timeFilteredData, int startTime) {
+        return BFS_for_MaxBreached(startUser, timeFilteredData, startTime).size();
     }
 
-    public List<Integer> BFS_for_MaxBreached(int startUser, List<List<Integer>> timeFilteredData) {
+    public List<Integer> BFS_for_MaxBreached(int startUser, List<List<Integer>> timeFilteredData,
+                                             int startTime) {
         Queue<Integer> q = new LinkedList<>();
         q.add(startUser);
         int node = startUser;
         Set<Integer> nodeVisited = new HashSet<>(node);
         List<Integer> path = new ArrayList<>(node);
+        AtomicInteger time = new AtomicInteger(startTime);
 
         while (!q.isEmpty()) {
             List<Integer> nodeList = new ArrayList<>();
             node = q.poll();
             int nodeInLambda = node;
+            int lambdaTime = time.get();
 
             timeFilteredData.forEach(x -> {
-                if (x.get(SENDER) == nodeInLambda) {
+                if (x.get(SENDER) == nodeInLambda && x.get(TIME) >= lambdaTime) {
                     nodeList.add(x.get(RECEIVER));
+                    time.set(x.get(TIME));
                 }
             });
             nodeList.forEach(x -> {
