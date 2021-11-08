@@ -56,7 +56,10 @@ public class DWInteractionGraph {
         for (List<Integer> ll : emailDataWithWeight) {
             System.out.println(ll);
         }
+        // remove
         printGraph();
+
+        checkRep();
     }
 
     // Make DWI graph
@@ -76,7 +79,7 @@ public class DWInteractionGraph {
             }
             DWG.put(sender, tempList);
         }
-
+        checkRep();
     }
 
     /**
@@ -106,6 +109,7 @@ public class DWInteractionGraph {
 
         makeDWI();
 
+        checkRep();
         // Remove
         System.out.println();
         System.out.println("===Time Filtered DWI===");
@@ -146,6 +150,8 @@ public class DWInteractionGraph {
             System.out.println(l);
         }
         makeDWI();
+
+        checkRep();
 
         // Remove
         System.out.println();
@@ -601,5 +607,15 @@ public class DWInteractionGraph {
         setEmailDataWithWeight(timeFilteredData);
 
         makeDWI();
+    }
+
+    private void checkRep() {
+        assert DWG != null;
+        assert emailDataWithWeight != null;
+        assert emailData != null;
+        assert userSet != null;
+        // Check no duplicates user ID in userList
+        boolean isDuplicate = userList.stream().allMatch(new HashSet<>()::add);
+        assert isDuplicate == true;
     }
 }
