@@ -549,7 +549,6 @@ public class DWInteractionGraph {
                 timeFilteredData.add(l);
             }
         }
-
         return timeFilteredData;
     }
 }
