@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -326,7 +327,9 @@ public class UDWInteractionGraph {
 
         if (emailWeightMap.containsKey(user)) {
             return emailWeightMap.get(user);
-        } else return emailWeightMap.getOrDefault(userComplement, 0);
+        } else {
+            return emailWeightMap.getOrDefault(userComplement, 0);
+        }
     }
 
     /* ------- Task 2 ------- */
@@ -417,8 +420,6 @@ public class UDWInteractionGraph {
         List<List<Integer>> userList = new ArrayList<>(emailWeightMap.keySet());
         int[] userTotalEmailList = new int[users.size()];
         int[] eachUserList = new int[users.size()];
-        int nthEmailWeight = 0;
-        int smallestN = 0;
 
         for (int i = 0; i < users.size(); i++) {
             int userEmailTotal = 0;
@@ -436,32 +437,24 @@ public class UDWInteractionGraph {
                 }
             }
             userTotalEmailList[i] = userEmailTotal;
-            eachUserList[i] = i;
+            eachUserList[i] = users.get(i);
         }
 
         for (int c = 0; c < users.size() - 1; c++) {
             for (int k = 0; k < users.size() - c - 1; k++) {
-                if (userTotalEmailList[c] < userTotalEmailList[c + 1]) {
-                    int temp1 = userTotalEmailList[c];
-                    userTotalEmailList[c] = userTotalEmailList[c + 1];
-                    userTotalEmailList[c + 1] = temp1;
+                if (userTotalEmailList[k] < userTotalEmailList[k + 1]) {
+                    int temp1 = userTotalEmailList[k];
+                    userTotalEmailList[k] = userTotalEmailList[k + 1];
+                    userTotalEmailList[k + 1] = temp1;
 
-                    int temp2 = eachUserList[c];
-                    eachUserList[c] = eachUserList[c + 1];
-                    eachUserList[c + 1] = temp2;
+                    int temp2 = eachUserList[k];
+                    eachUserList[k] = eachUserList[k + 1];
+                    eachUserList[k + 1] = temp2;
                 }
+
             }
         }
-        nthEmailWeight = userTotalEmailList[N - 1];
-        smallestN = eachUserList[N - 1];
-
-        for (int m = 0; m < users.size(); m++) {
-            if (userTotalEmailList[m] == nthEmailWeight && eachUserList[m] < smallestN) {
-                smallestN = eachUserList[m];
-            }
-        }
-
-        return smallestN;
+        return (N > eachUserList.length) ? -1 : eachUserList[N - 1];
     }
 
 
@@ -512,7 +505,7 @@ public class UDWInteractionGraph {
      * find number of components in a graph
      *
      * @param componentSet a set that contains components.
-     * @param userSet a set that contains users that have been added to a component already.
+     * @param userSet      a set that contains users that have been added to a component already.
      */
 
     private void findComponents(Set<Set<Integer>> componentSet, Set<Integer> userSet) {
@@ -533,10 +526,10 @@ public class UDWInteractionGraph {
      * specified user can get to.
      *
      * @param eachUser a specified user
-     * @param path set os users where specified user can get to.
+     * @param path     set os users where specified user can get to.
      */
 
-    private void findPath (int eachUser, Set<Integer> path) {
+    private void findPath(int eachUser, Set<Integer> path) {
         for (int i = 0; i < UDWIG.get(eachUser).size(); i++) {
             if (!path.contains(UDWIG.get(eachUser).get(i))) {
                 path.add(UDWIG.get(eachUser).get(i));
