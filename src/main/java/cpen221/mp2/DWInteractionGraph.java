@@ -170,9 +170,9 @@ public class DWInteractionGraph {
     private void printGraph() {
         for (Integer sender : DWG.keySet()) {
             System.out.println("-------------------------------------");
-            List<Edge> temp = new LinkedList<>();
-            temp = DWG.get(sender);
-            temp.stream().forEach(x -> x.printEdge());
+            List<Edge> listToPrint = new LinkedList<>();
+            listToPrint = DWG.get(sender);
+            listToPrint.stream().forEach(x -> x.printEdge());
         }
     }
 
