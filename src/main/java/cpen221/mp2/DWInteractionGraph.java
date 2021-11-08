@@ -18,15 +18,19 @@ public class DWInteractionGraph {
     private Set<Integer> userSet;
     private List<Integer> userList;
     /* Representation Invariant */
-    // TODO: Write RI
+    // Every field only contains non-negative integers
+    // For every sender, receiver and weight exists
+    // Sender can have multiple receivers
+    // No duplicate user ID for userSet and userList
 
     /* Abstraction Function */
-    //TODO: write AF
-
+    // Represent Directed Weighted Graph email interactions
 
     /*Safety from rep exposure:*/
     // All fields are private
-    // Use defensive copying when returning a mutable object
+    // userSet is a mutable Set, but getUserIDs() makes a defensive copy of the set it returns
+    // DWG is a mutable Map, email data and emailDataWithWeight is a mutable List of Integer List,
+    // and userList is a mutable List. But these types are never passed or returned in public operations.
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
@@ -34,6 +38,7 @@ public class DWInteractionGraph {
      *
      * @param fileName the name of the file in the resource
      *                 directory containing email interactions
+     * @throws IOException if an I/O error occurs
      */
     public DWInteractionGraph(String fileName) {
         emailData = new ArrayList<>(processData(fileName));
@@ -51,7 +56,10 @@ public class DWInteractionGraph {
         for (List<Integer> ll : emailDataWithWeight) {
             System.out.println(ll);
         }
+        // remove
         printGraph();
+
+        checkRep();
     }
 
     // Make DWI graph
@@ -71,7 +79,7 @@ public class DWInteractionGraph {
             }
             DWG.put(sender, tempList);
         }
-
+        checkRep();
     }
 
     /**
@@ -102,6 +110,7 @@ public class DWInteractionGraph {
 
         makeDWI();
 
+        checkRep();
         // Remove
         System.out.println();
         System.out.println("===Time Filtered DWI===");
@@ -143,13 +152,16 @@ public class DWInteractionGraph {
         }
         makeDWI();
 
+        checkRep();
+
         // Remove
         System.out.println();
         System.out.println("===User Filtered DWI===");
         printGraph();
     }
 
-    // Remove. For debugging purpose. Nothing special
+    // Print DWI Graph in format of Sender = (Sender ID), Receiver = (Receiver ID), Weight = (Weight)
+    // Each user separated by a line
     private void printGraph() {
         for (Integer sender : DWG.keySet()) {
             System.out.println("-------------------------------------");
@@ -160,7 +172,7 @@ public class DWInteractionGraph {
     }
 
     /**
-     * @return ID of every users in DWInteraction Graph, where every element in the set is a User ID
+     * @return ID of every user in DWInteraction Graph, where every element in the set is a User ID
      * in this DWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
@@ -212,6 +224,7 @@ public class DWInteractionGraph {
         }
     }
 
+    // Read and process txt file to List of Integer List
     private List<List<Integer>> processData(String fileName) {
         List<List<Integer>> dataInteger = new ArrayList<>();
         try {
@@ -219,8 +232,7 @@ public class DWInteractionGraph {
             for (String fileLine = reader.readLine();
                  fileLine != null;
                  fileLine = reader.readLine()) {
-                dataInteger.add(stringToInteger(fileLine));
-
+                 dataInteger.add(stringToInteger(fileLine));
             }
             reader.close();
         } catch (IOException ioe) {
@@ -229,6 +241,7 @@ public class DWInteractionGraph {
         return dataInteger;
     }
 
+    // Convert String to Integer
     private List<Integer> stringToInteger(String fileLine) {
         List<Integer> integerList = new ArrayList<>();
         String[] fileLineParts = fileLine.split("\\s+");
@@ -240,7 +253,7 @@ public class DWInteractionGraph {
         return integerList;
     }
 
-    // defensive copying return
+    // Return this DWI graph's email data
     protected List<List<Integer>> getDWI_data() {
         return new ArrayList<>(this.emailData);
     }
@@ -255,8 +268,8 @@ public class DWInteractionGraph {
      * [NumberOfSenders, NumberOfReceivers, NumberOfEmailTransactions]
      */
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
-        // I can use DWI constructor with time filter. But I feel like it will mutate original DWI.
-        // Not sure. But easy to change implementation later
+        int START_TIME_INDEX = 0;
+        int END_TIME_INDEX = 1;
         int[] report = {0, 0, 0};
         int numEmailTransaction = 0;
         List<List<Integer>> data = new ArrayList<>(emailData);
@@ -264,15 +277,18 @@ public class DWInteractionGraph {
         Set<Integer> senders = new HashSet<>();
         Set<Integer> receivers = new HashSet<>();
 
-        for (List l : data) {
-            if ((int) l.get(TIME) >= timeWindow[0] && (int) l.get(TIME) <= timeWindow[1]) {
-                timeFilteredData.add(l);
+        // Filter out data out of input time window
+        for (List list : data) {
+            if ((int) list.get(TIME) >= timeWindow[START_TIME_INDEX] && (int) list.get(TIME) <= timeWindow[END_TIME_INDEX]) {
+                timeFilteredData.add(list);
                 numEmailTransaction++;
             }
         }
-        for (List l : timeFilteredData) {
-            senders.add((Integer) l.get(SENDER));
-            receivers.add((Integer) l.get(RECEIVER));
+
+        // Count Activities during input time window
+        for (List list : timeFilteredData) {
+            senders.add((Integer) list.get(SENDER));
+            receivers.add((Integer) list.get(RECEIVER));
         }
         report[0] = senders.size();
         report[1] = receivers.size();
@@ -294,25 +310,29 @@ public class DWInteractionGraph {
         int[] report = {0, 0, 0};
         int numSent = 0;
         int numReceive = 0;
-        int subtract = 0;
-        int uniqueInteraction = 0;      // Just count number of edges related to the user
-        Set<Integer> temp = new HashSet<>();
+        int uniqueInteraction;
+        Set<Integer> uniqueUserSet = new HashSet<>();
 
+        // Return [0, 0, 0] if user does not exist in this graph
+        if (!userList.contains(userID)) {
+            return new int[] {0, 0, 0};
+        }
 
+        // Count number of email sent and received, and add user ID to Set to avoid duplicates
         for (Integer i : DWG.keySet()) {
             for (Edge e : DWG.get(i)) {
                 if (e.getReceiver() == userID) {
                     numReceive += e.getWeight();
-                    temp.add((Integer) e.getSender());
+                    uniqueUserSet.add((Integer) e.getSender());
                 }
                 if (e.getSender() == userID) {
                     numSent += e.getWeight();
-                    temp.add((Integer) e.getReceiver());
+                    uniqueUserSet.add((Integer) e.getReceiver());
                 }
             }
         }
 
-        uniqueInteraction = temp.size();
+        uniqueInteraction = uniqueUserSet.size();
 
         report[0] = numSent;
         report[1] = numReceive;
@@ -327,6 +347,7 @@ public class DWInteractionGraph {
      * @return the User ID for the Nth most active user in specified interaction type.
      * Sorts User IDs by their number of sent or received emails first. In the case of a
      * tie, secondarily sorts the tied User IDs in ascending order.
+     * If Nth Most Active User does not exist, return -1
      */
     public int NthMostActiveUser(int N, SendOrReceive interactionType) {
         // made new class Element to tie index and value together
@@ -334,8 +355,10 @@ public class DWInteractionGraph {
         List<Element> receiveRanking = new ArrayList<>();
         int validSendRank = 0;
         int validReceiveRank = 0;
-        int wantedData = 0;
+        int NthMostActiveUser = 0;
 
+        // Add each user's ID and number of email sent in sendRanking List and
+        // and user's ID and number of email received in receiveRanking List
         for (Integer user : userList) {
             int numSend = 0;
             int numReceive = 0;
@@ -351,6 +374,7 @@ public class DWInteractionGraph {
             receiveRanking.add(new Element((int) user, numReceive));
         }
 
+        // Sort List in non-increasing order
         sendRanking =
             sendRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed())
                 .collect(Collectors.toList());
@@ -358,24 +382,24 @@ public class DWInteractionGraph {
             receiveRanking.stream().sorted(Comparator.comparing(Element::getValue).reversed())
                 .collect(Collectors.toList());
 
+        // Filter out User with zero number of email sent or receive from the List
         if (interactionType == SendOrReceive.SEND) {
             validSendRank =
                 (int) sendRanking.stream().filter(x -> x.getValue() > 0).count();
             if (N > validSendRank) {
                 return -1;
             }
-            wantedData = sendRanking.get(N - 1).getIndex();
+            NthMostActiveUser = sendRanking.get(N - 1).getIndex();
         }
-
         if (interactionType == SendOrReceive.RECEIVE) {
             validReceiveRank =
                 (int) receiveRanking.stream().filter(x -> x.getValue() > 0).count();
             if (N > validReceiveRank) {
                 return -1;
             }
-            wantedData = receiveRanking.get(N - 1).getIndex();
+            NthMostActiveUser = receiveRanking.get(N - 1).getIndex();
         }
-        return wantedData;
+        return NthMostActiveUser;
     }
 
     /**
@@ -389,34 +413,37 @@ public class DWInteractionGraph {
      * if no path exists, should return null.
      */
     public List<Integer> BFS(int userID1, int userID2) {
-        Queue<Integer> q = new LinkedList<>();
-        q.add(userID1);
-        int node = userID1;
-        Set<Integer> nodeVisited = new HashSet<>(node);
-        List<Integer> path = new ArrayList<>(node);
-        List<Integer> noPath = new ArrayList<>();
+        Queue<Integer> queue = new LinkedList<>();
+        Set<Integer> isVisited = new LinkedHashSet<>();
+        Integer root = userID1;
+        boolean found = false;
 
-        while (!q.isEmpty()) {
-            List<Integer> nodeList = new ArrayList<>();
-            node = q.poll();
-            if (node == userID2) {
-                path.add(node);
-                return path;
-            } else {
-                DWG.get(node).forEach(x -> nodeList.add(x.getReceiver()));
-                nodeList.forEach(x -> {
-                    if (!nodeVisited.contains(x)) {
-                        q.add(x);
-                        nodeVisited.add(x);
-                    }
-                });
-                if (!path.contains(node)) {
-                    path.add(node);
+        // Return null if one of the userID1 or userID2 does not exist in DWI Graph
+        if (!userList.contains(userID1) || !userList.contains(userID2)) {
+            return null;
+        }
+
+        queue.add(root);
+        isVisited.add(root);
+
+        while (!queue.isEmpty()) {
+            Integer current = queue.remove();
+            if (current == userID2) {
+                found = true;
+            }
+            for (Edge adjacent : DWG.get(current)) {
+                if (!isVisited.contains(adjacent.getReceiver()) && !isVisited.contains(userID2)) {
+                    queue.add(adjacent.getReceiver());
+                    isVisited.add(adjacent.getReceiver());
                 }
             }
         }
 
-        return noPath;
+        if (!found) {
+            return null;
+        }
+
+        return new ArrayList<>(isVisited);
     }
 
     /**
@@ -550,5 +577,15 @@ public class DWInteractionGraph {
             }
         }
         return timeFilteredData;
+    }
+
+    private void checkRep() {
+        assert DWG != null;
+        assert emailDataWithWeight != null;
+        assert emailData != null;
+        assert userSet != null;
+        // Check no duplicates user ID in userList
+        boolean isDuplicate = userList.stream().allMatch(new HashSet<>()::add);
+        assert isDuplicate == true;
     }
 }

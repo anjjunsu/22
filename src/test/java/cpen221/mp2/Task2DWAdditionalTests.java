@@ -63,12 +63,27 @@ public class Task2DWAdditionalTests {
     public void testNthMostActiveUser1() {
         Assertions.assertEquals(3, testGraph.NthMostActiveUser(2, SendOrReceive.SEND));
         Assertions.assertEquals(13, testGraph.NthMostActiveUser(2, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(7, testGraph.NthMostActiveUser(3, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(10, testGraph.NthMostActiveUser(4, SendOrReceive.RECEIVE));
     }
 
     @Test
     public void testNthMostActiveUser2() {
-        Assertions.assertEquals(-1, testGraph.NthMostActiveUser(200, SendOrReceive.SEND));
-        Assertions.assertEquals(-1, testGraph.NthMostActiveUser(200, SendOrReceive.RECEIVE));
+        DWInteractionGraph t = new DWInteractionGraph(testGraph, new int[] {53, 53});
+        Assertions.assertEquals(1, t.NthMostActiveUser(1, SendOrReceive.SEND));
+        Assertions.assertEquals(8, t.NthMostActiveUser(2, SendOrReceive.SEND));
+        Assertions.assertEquals(21, t.NthMostActiveUser(3, SendOrReceive.SEND));
+        Assertions.assertEquals(23, t.NthMostActiveUser(4, SendOrReceive.SEND));
+        Assertions.assertEquals(7, t.NthMostActiveUser(1, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(10, t.NthMostActiveUser(2, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(16, t.NthMostActiveUser(3, SendOrReceive.RECEIVE));
+        Assertions.assertEquals(24, t.NthMostActiveUser(4, SendOrReceive.RECEIVE));
+    }
+
+    @Test
+    public void testNthMostActiveUser3() {
+        Assertions.assertEquals(-1, testGraph.NthMostActiveUser(27, SendOrReceive.SEND));
+        Assertions.assertEquals(-1, testGraph.NthMostActiveUser(27, SendOrReceive.RECEIVE));
     }
 
 }
