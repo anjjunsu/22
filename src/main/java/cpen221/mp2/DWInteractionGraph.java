@@ -16,7 +16,7 @@ public class DWInteractionGraph {
     private List<List<Integer>> emailData;
     private List<List<Integer>> emailDataWithWeight;
     private Set<Integer> userSet;
-    private List<Integer> userList;
+
     /* Representation Invariant */
     // Every field only contains non-negative integers
     // For every sender, receiver and weight exists
@@ -54,7 +54,7 @@ public class DWInteractionGraph {
     private void makeDWI() {
         DWG = new HashMap<Integer, LinkedList<Edge>>();
 
-        for (Integer sender : userList) {
+        for (Integer sender : userSet) {
             LinkedList<Edge> edge = new LinkedList<>();
             for (List data : emailDataWithWeight) {
                 if (data.get(SENDER) == sender) {
@@ -160,13 +160,13 @@ public class DWInteractionGraph {
     private void setEmailDataWithWeight(List<List<Integer>> data) {
         emailDataWithWeight = new ArrayList<>();
         userSet = new HashSet<>();
-        data.stream().forEach(x -> userSet.add(x.get(SENDER)));
-        data.stream().forEach(x -> userSet.add(x.get(RECEIVER)));
+        for (List list : data) {
+            userSet.add((Integer) list.get(SENDER));
+            userSet.add((Integer) list.get(RECEIVER));
+        }
 
-        userList = new ArrayList<>(userSet);
-
-        for (Integer sender : userList) {
-            for (Integer receiver : userList) {
+        for (Integer sender : userSet) {
+            for (Integer receiver : userSet) {
                 List<Integer> tempList = new ArrayList<>();
                 Integer weight = 0;
                 for (List<Integer> d : data) {
@@ -288,7 +288,7 @@ public class DWInteractionGraph {
         Set<Integer> uniqueUserSet = new HashSet<>();
 
         // Return [0, 0, 0] if user does not exist in this graph
-        if (!userList.contains(userID)) {
+        if (!userSet.contains(userID)) {
             return new int[] {0, 0, 0};
         }
 
@@ -333,7 +333,7 @@ public class DWInteractionGraph {
 
         // Add each user's ID and number of email sent in sendRanking List and
         // and user's ID and number of email received in receiveRanking List
-        for (Integer user : userList) {
+        for (Integer user : userSet) {
             int numSend = 0;
             int numReceive = 0;
             for (List dataList : emailDataWithWeight) {
@@ -391,7 +391,7 @@ public class DWInteractionGraph {
         boolean found = false;
 
         // Return null if one of the userID1 or userID2 does not exist in DWI Graph
-        if (!userList.contains(userID1) || !userList.contains(userID2)) {
+        if (!userSet.contains(userID1) || !userSet.contains(userID2)) {
             return null;
         }
 
@@ -432,7 +432,7 @@ public class DWInteractionGraph {
         Set<Integer> isVisited = new LinkedHashSet<>();
         boolean found = false;
 
-        if (!(userList.contains(userID1) || userList.contains(userID2))) {
+        if (!(userSet.contains(userID1) || userSet.contains(userID2))) {
             return null;
         }
 
@@ -588,8 +588,5 @@ public class DWInteractionGraph {
         assert emailDataWithWeight != null;
         assert emailData != null;
         assert userSet != null;
-        // Check no duplicates user ID in userList
-        boolean isDuplicate = userList.stream().allMatch(new HashSet<>()::add);
-        assert isDuplicate;
     }
 }
