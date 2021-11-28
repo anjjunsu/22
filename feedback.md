@@ -4,7 +4,7 @@
 
 | Compilation | Timeout | Duration |
 |:-----------:|:-------:|:--------:|
-||NoNoNoYes|627.98|
+|YesYesYesYes|NoNoNoYes|627.98|
 
 ## Comments
 The extra constructor as mentioned in campuswire #1182 was not added in. RI/AFs look great on all the classes, and specs on public methods are also good. Very good use of helper methods, the code is very readable.
